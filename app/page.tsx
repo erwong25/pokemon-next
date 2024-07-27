@@ -12,15 +12,26 @@ export default function Home() {
   const [roster, setRoster] = useState<Array<keyof POKEMON_LIST>>([]);
   return (
     <div>
-      {roster.map((item) => (
-        <div className="bg-red flex">
-          <div id={item} className="max-w-sm mx-auto">
-            <Image src={POKEMONS[item].staticSprite} alt="" />
-            {POKEMONS[item].name}
-            HP: {calculateMaxHP(POKEMONS[item])}
+      <div className="h-full bg-red-600 w-fit flex grid grid-cols-2 gap-4 p-4 mx-auto">
+        {roster.map((item) => (
+          <div id={item} className="w-80 bg-green-600 flex">
+            <Image
+              className="h-24 w-auto"
+              src={POKEMONS[item].animatedSprite}
+              alt=""
+            />
+            <div className="bg-blue-600 p-2">
+              <div className="bg-yellow-600">{POKEMONS[item].name}</div>
+              <div>
+                <div>HP Bar</div>
+              </div>
+              <div className="bg-purple-600">
+                HP: {calculateMaxHP(POKEMONS[item])}
+              </div>
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
       <Link href={"/battle?roster=" + roster.join(",")}>Start Battle</Link>
       {roster.length == 0 ? (
         <h1>Choose your starting pokemon</h1>

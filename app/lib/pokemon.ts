@@ -1,6 +1,7 @@
 import { animatedSpriteList, staticSpriteList } from "./spritesList";
 import type { Type } from "./types";
 import { MOVES, type Move } from "./moves";
+import { StaticImageData } from "next/image";
 
 type Stats = {
   atk: number;
@@ -13,8 +14,8 @@ type Stats = {
 
 export type Pokemon = {
   id: number;
-  staticSprite: string;
-  animatedSprite: string;
+  staticSprite: StaticImageData;
+  animatedSprite: StaticImageData;
   moves: Array<Move>;
   name: string;
   types: Array<Type>;
