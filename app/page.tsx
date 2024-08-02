@@ -15,17 +15,15 @@ export default function Home() {
       <div className="h-full bg-red-600 w-fit flex grid grid-cols-2 gap-4 p-4 mx-auto">
         {roster.map((item) => (
           <div id={item} className="w-80 bg-green-600 flex">
-            <Image
-              className="h-24 w-auto"
-              src={POKEMONS[item].animatedSprite}
-              alt=""
-            />
-            <div className="bg-blue-600 p-2">
+            <div className="object-center w-[100px]">
+              <Image className="" src={POKEMONS[item].animatedSprite} alt="" />
+            </div>
+            <div className="bg-blue-600 w-full content-center">
               <div className="bg-yellow-600">{POKEMONS[item].name}</div>
-              <div>
+              <div className="flex grow">
                 <div>HP Bar</div>
               </div>
-              <div className="bg-purple-600">
+              <div className="bg-purple-600 flex justify-end">
                 HP: {calculateMaxHP(POKEMONS[item])}
               </div>
             </div>
@@ -43,7 +41,7 @@ export default function Home() {
           .filter((pokemon) => !roster.includes(pokemon))
           .map((item) => (
             <div>
-              <Image src={POKEMONS[item].staticSprite} alt="" />
+              <Image src={POKEMONS[item].animatedSprite} alt="" />
               <button
                 onClick={() => {
                   setRoster([...roster, item]);
