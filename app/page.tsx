@@ -14,8 +14,11 @@ export default function Home() {
     <div>
       <div className="h-full bg-red-600 w-fit flex grid grid-cols-2 gap-4 p-4 mx-auto">
         {roster.map((item) => (
-          <div id={item} className="w-80 bg-green-600 flex">
-            <div className="object-center w-[100px]">
+          <div
+            id={item}
+            className="w-[400px] bg-green-600 flex h-28 rounded-md rounded-tl-3xl"
+          >
+            <div className="bg-white flex justify-center m-auto w-[190px]">
               <Image className="" src={POKEMONS[item].animatedSprite} alt="" />
             </div>
             <div className="bg-blue-600 w-full content-center">
