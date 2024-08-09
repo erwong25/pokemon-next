@@ -49,32 +49,47 @@ export default function Page({
   );
   const [opponentRosterHP, setOpponentRosterHP] = useState(""); // not implemented at all yet
 
+  console.log(playerRosterHP);
   return (
     <div>
-      <Image src={activePlayerPokemon.animatedSprite} alt="" />
-      <Image src={activeOpponentPokemon.animatedSprite} alt="" />
-      <p>
-        {activePlayerPokemon.name}: {activePlayerHP}
-      </p>
-      <p>
-        {activeOpponentPokemon.name}: {activeOpponentHP}
-      </p>
-      {combatText(
-        activePlayerPokemon.name,
-        activePlayerPokemon.name,
-        activePlayerMove,
-        damageDealt
-      )}
-      {combatText(
-        activeOpponentPokemon.name,
-        activeOpponentPokemon.name,
-        activeOpponentMove,
-        damageReceived
-      )}
+      <div className="flex justify-end">
+        <Link
+          className="bg-gray-300 hover:bg-gray-500 text-gray-800 px-1 border border-gray-400 rounded shadow"
+          href={"/"}
+        >
+          Reset
+        </Link>
+      </div>
+      <div className="flex bg-green-600 justify-center mt-48">
+        <div className="bg-orange-600 content-center">
+          {activePlayerPokemon.name}: {activePlayerHP}
+        </div>
+        <div className="bg-white flex justify-center w-[500px] h-[200px]">
+          <div className="bg-red-600 scale-x-[-2] scale-y-[2] m-auto">
+            <Image
+              className=""
+              src={activePlayerPokemon.animatedSprite}
+              alt=""
+            />
+          </div>
+          <div className="bg-blue-600 m-auto scale-[2]">
+            <Image
+              className=""
+              src={activeOpponentPokemon.animatedSprite}
+              alt=""
+            />
+          </div>
+        </div>
+        <div className="bg-orange-600 content-center">
+          {activeOpponentPokemon.name}: {activeOpponentHP}
+        </div>
+      </div>
+
       {activePlayerHP <= 0 && <p>{activePlayerPokemon.name} fainted</p>}
-      <p>
+      <div className="bg-purple-600 flex grid grid-cols-2 w-[300px] mx-auto my-2">
         {activePlayerPokemon.moves.map((item) => (
           <button
+            className="bg-gray-300 hover:bg-gray-500 text-gray-800 py-2 w-[130px] border border-gray-400 rounded shadow mx-auto my-2"
             onClick={() => {
               const opponentMove =
                 activeOpponentPokemon.moves[
@@ -116,25 +131,41 @@ export default function Page({
             {item.name}
           </button>
         ))}
-        {
-          <button
-            onClick={() => {
-              setActivePlayerPokemon(POKEMONS.GENGAR);
-              if (!playerRosterHP.has(POKEMONS.GENGAR.name)) {
-                setPlayerRosterHP(
-                  playerRosterHP.set("pokemon", {
-                    pokemon: POKEMONS.GENGAR,
-                    currentHP: calculateMaxHP(POKEMONS.GENGAR),
-                  })
-                );
-              }
-            }}
-          >
-            Switch
-          </button>
-        }
-      </p>
-      <Link href={"/"}>Reset</Link>
+      </div>
+
+      <button
+        onClick={() => {
+          setPlayerRosterHP(
+            playerRosterHP.set(activePlayerPokemon.name, {
+              pokemon: activePlayerPokemon,
+              currentHP: activePlayerHP,
+            })
+          );
+          setActivePlayerPokemon(POKEMONS.GENGAR);
+          if (!playerRosterHP.has(POKEMONS.GENGAR.name)) {
+            setPlayerRosterHP(
+              playerRosterHP.set("pokemon", {
+                pokemon: POKEMONS.GENGAR,
+                currentHP: calculateMaxHP(POKEMONS.GENGAR),
+              })
+            );
+          }
+        }}
+      >
+        Switch
+      </button>
+      {combatText(
+        activePlayerPokemon.name,
+        activePlayerPokemon.name,
+        activePlayerMove,
+        damageDealt
+      )}
+      {combatText(
+        activeOpponentPokemon.name,
+        activeOpponentPokemon.name,
+        activeOpponentMove,
+        damageReceived
+      )}
     </div>
   );
 }

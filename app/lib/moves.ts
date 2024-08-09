@@ -10,6 +10,22 @@ export type Move = {
   damageCategory: DamageCategory;
 };
 
+export const TACKLE: Move = {
+  name: "Tackle",
+  type: "Normal",
+  power: 40,
+  accuracy: 1,
+  damageCategory: "Physical",
+};
+
+export const SLAM: Move = {
+  name: "Slam",
+  type: "Normal",
+  power: 80,
+  accuracy: 0.75,
+  damageCategory: "Physical",
+};
+
 export const POISON_JAB: Move = {
   name: "Poison Jab",
   type: "Poison",
@@ -115,6 +131,8 @@ export const PETAL_DANCE: Move = {
 };
 
 export const MOVES = {
+  TACKLE,
+  SLAM,
   POISON_JAB,
   HORN_ATTACK,
   DRILL_RUN,

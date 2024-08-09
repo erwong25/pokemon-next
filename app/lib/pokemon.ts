@@ -45,7 +45,7 @@ export const BULBASAUR: Pokemon = {
   id: 1,
   staticSprite: staticSpriteList.sprite1,
   animatedSprite: animatedSpriteList.sprite1,
-  moves: [MOVES.PETAL_DANCE, MOVES.SLUDGE_BOMB],
+  moves: [MOVES.PETAL_DANCE, MOVES.SLUDGE_BOMB, MOVES.TACKLE, MOVES.SLAM],
   name: "Bulbasaur",
   types: ["Grass", "Poison"],
   stats: {
@@ -62,7 +62,7 @@ export const IVYSAUR: Pokemon = {
   id: 2,
   staticSprite: staticSpriteList.sprite2,
   animatedSprite: animatedSpriteList.sprite2,
-  moves: [MOVES.PETAL_DANCE, MOVES.SLUDGE_BOMB],
+  moves: [MOVES.PETAL_DANCE, MOVES.SLUDGE_BOMB, MOVES.TACKLE, MOVES.SLAM],
   name: "Ivysaur",
   types: ["Grass", "Poison"],
   stats: {
