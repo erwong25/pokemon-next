@@ -22,9 +22,6 @@ export default function Page({
     Object.keys(POKEMONS).includes(pokemon)
   ) as Array<keyof POKEMON_LIST>;
   const startingPlayerPokemon = roster[0];
-  if (startingPlayerPokemon == null) {
-    return;
-  }
   const startingOpponentPokemon = Object.keys(POKEMONS)[
     Math.floor(Math.random() * Object.keys(POKEMONS).length)
   ] as keyof POKEMON_LIST;
@@ -48,6 +45,9 @@ export default function Page({
     generatePlayerRoster(roster)
   );
   const [opponentRosterHP, setOpponentRosterHP] = useState(""); // not implemented at all yet
+  if (startingPlayerPokemon == null) {
+    return;
+  }
 
   console.log(playerRosterHP);
   return (
