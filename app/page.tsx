@@ -15,6 +15,7 @@ export default function Home() {
       <div className="h-full bg-red-600 w-fit flex grid grid-cols-2 gap-4 p-4 mx-auto">
         {roster.map((item) => (
           <div
+            key={`${item}`}
             id={item}
             className="w-[400px] bg-green-600 flex h-28 rounded-md rounded-tl-3xl"
           >
@@ -43,7 +44,7 @@ export default function Home() {
         pokemonList
           .filter((pokemon) => !roster.includes(pokemon))
           .map((item) => (
-            <div>
+            <div key={`${item}`}>
               <Image src={POKEMONS[item].animatedSprite} alt="" />
               <button
                 onClick={() => {
