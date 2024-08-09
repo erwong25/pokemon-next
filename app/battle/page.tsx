@@ -89,6 +89,7 @@ export default function Page({
       <div className="bg-purple-600 flex grid grid-cols-2 w-[300px] mx-auto my-2">
         {activePlayerPokemon.moves.map((item) => (
           <button
+            key={`${item}`}
             className="bg-gray-300 hover:bg-gray-500 text-gray-800 py-2 w-[130px] border border-gray-400 rounded shadow mx-auto my-2"
             onClick={() => {
               const opponentMove =
