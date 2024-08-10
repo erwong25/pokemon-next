@@ -1,7 +1,8 @@
 import type { Type } from "./types";
 import type { Move } from "./moves";
 import type { Pokemon } from "./pokemon";
-import { TypeEffectiveness, TYPE_EFFECTIVENESS_MAP } from "./typeEffectiveness";
+import { TypeEffectiveness } from "./typeEffectiveness";
+import typeEffectivenessCalc from "./typeEffectiveness";
 
 export type CombatOutcome = "Miss" | "No effect" | number;
 
@@ -10,16 +11,10 @@ function computeTypeEffectiveness(
   defenderType: Array<Type>
 ): number {
   if (defenderType.length == 1) {
-    return (
-      TYPE_EFFECTIVENESS_MAP.get(moveType)?.get(defenderType[0]) ??
-      TypeEffectiveness.DEFAULT
-    );
+    return typeEffectivenessCalc(moveType, defenderType[0]);
   } else if (defenderType.length == 2) {
-    const map = TYPE_EFFECTIVENESS_MAP.get(moveType);
-    const effectiveness1 =
-      map?.get(defenderType[0]) ?? TypeEffectiveness.DEFAULT;
-    const effectiveness2 =
-      map?.get(defenderType[1]) ?? TypeEffectiveness.DEFAULT;
+    const effectiveness1 = typeEffectivenessCalc(moveType, defenderType[0]);
+    const effectiveness2 = typeEffectivenessCalc(moveType, defenderType[1]);
     return effectiveness1 * effectiveness2;
   }
   return TypeEffectiveness.DEFAULT;
