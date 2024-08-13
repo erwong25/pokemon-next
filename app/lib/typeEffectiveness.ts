@@ -56,13 +56,234 @@ export default function typeEffectivenessCalc(
         case "Bug":
         case "Psychic":
         case "Fairy":
-          return TypeEffectiveness.SUPER_EFFECTIVE;
+          return TypeEffectiveness.NOT_VERY_EFFECTIVE;
         case "Ghost":
           return TypeEffectiveness.NO_EFFECT;
         default:
           return TypeEffectiveness.DEFAULT;
       }
-
+    case "Flying":
+      switch (defenderType) {
+        case "Fighting":
+        case "Bug":
+          return TypeEffectiveness.SUPER_EFFECTIVE;
+        case "Rock":
+        case "Electric":
+        case "Steel":
+          return TypeEffectiveness.NOT_VERY_EFFECTIVE;
+        default:
+          return TypeEffectiveness.DEFAULT;
+      }
+    case "Poison":
+      switch (defenderType) {
+        case "Grass":
+        case "Fairy":
+          return TypeEffectiveness.SUPER_EFFECTIVE;
+        case "Poison":
+        case "Ground":
+        case "Rock":
+        case "Ghost":
+          return TypeEffectiveness.NOT_VERY_EFFECTIVE;
+        case "Steel":
+          return TypeEffectiveness.NO_EFFECT;
+        default:
+          return TypeEffectiveness.DEFAULT;
+      }
+    case "Ground":
+      switch (defenderType) {
+        case "Poison":
+        case "Rock":
+        case "Steel":
+        case "Fire":
+          return TypeEffectiveness.SUPER_EFFECTIVE;
+        case "Bug":
+        case "Grass":
+          return TypeEffectiveness.NOT_VERY_EFFECTIVE;
+        case "Flying":
+          return TypeEffectiveness.NO_EFFECT;
+        default:
+          return TypeEffectiveness.DEFAULT;
+      }
+    case "Rock":
+      switch (defenderType) {
+        case "Flying":
+        case "Bug":
+        case "Fire":
+        case "Ice":
+          return TypeEffectiveness.SUPER_EFFECTIVE;
+        case "Fighting":
+        case "Ground":
+        case "Steel":
+          return TypeEffectiveness.NOT_VERY_EFFECTIVE;
+        default:
+          return TypeEffectiveness.DEFAULT;
+      }
+    case "Bug":
+      switch (defenderType) {
+        case "Grass":
+        case "Psychic":
+        case "Dark":
+          return TypeEffectiveness.SUPER_EFFECTIVE;
+        case "Fighting":
+        case "Flying":
+        case "Poison":
+        case "Ghost":
+        case "Steel":
+        case "Fire":
+        case "Fairy":
+          return TypeEffectiveness.NOT_VERY_EFFECTIVE;
+        default:
+          return TypeEffectiveness.DEFAULT;
+      }
+    case "Ghost":
+      switch (defenderType) {
+        case "Ghost":
+        case "Psychic":
+          return TypeEffectiveness.SUPER_EFFECTIVE;
+        case "Dark":
+          return TypeEffectiveness.NOT_VERY_EFFECTIVE;
+        case "Normal":
+          return TypeEffectiveness.NO_EFFECT;
+        default:
+          return TypeEffectiveness.DEFAULT;
+      }
+    case "Steel":
+      switch (defenderType) {
+        case "Rock":
+        case "Ice":
+        case "Fairy":
+          return TypeEffectiveness.SUPER_EFFECTIVE;
+        case "Steel":
+        case "Fire":
+        case "Water":
+        case "Electric":
+          return TypeEffectiveness.NOT_VERY_EFFECTIVE;
+        default:
+          return TypeEffectiveness.DEFAULT;
+      }
+    case "Fire":
+      switch (defenderType) {
+        case "Bug":
+        case "Steel":
+        case "Grass":
+        case "Ice":
+          return TypeEffectiveness.SUPER_EFFECTIVE;
+        case "Rock":
+        case "Fire":
+        case "Water":
+        case "Dragon":
+          return TypeEffectiveness.NOT_VERY_EFFECTIVE;
+        default:
+          return TypeEffectiveness.DEFAULT;
+      }
+    case "Water":
+      switch (defenderType) {
+        case "Ground":
+        case "Rock":
+        case "Fire":
+          return TypeEffectiveness.SUPER_EFFECTIVE;
+        case "Water":
+        case "Grass":
+        case "Dragon":
+          return TypeEffectiveness.NOT_VERY_EFFECTIVE;
+        default:
+          return TypeEffectiveness.DEFAULT;
+      }
+    case "Grass":
+      switch (defenderType) {
+        case "Ground":
+        case "Rock":
+        case "Water":
+          return TypeEffectiveness.SUPER_EFFECTIVE;
+        case "Flying":
+        case "Poison":
+        case "Bug":
+        case "Steel":
+        case "Fire":
+        case "Grass":
+        case "Dragon":
+          return TypeEffectiveness.NOT_VERY_EFFECTIVE;
+        default:
+          return TypeEffectiveness.DEFAULT;
+      }
+    case "Electric":
+      switch (defenderType) {
+        case "Flying":
+        case "Water":
+          return TypeEffectiveness.SUPER_EFFECTIVE;
+        case "Grass":
+        case "Electric":
+        case "Dragon":
+          return TypeEffectiveness.NOT_VERY_EFFECTIVE;
+        case "Ground":
+          return TypeEffectiveness.NO_EFFECT;
+        default:
+          return TypeEffectiveness.DEFAULT;
+      }
+    case "Psychic":
+      switch (defenderType) {
+        case "Fighting":
+        case "Poison":
+          return TypeEffectiveness.SUPER_EFFECTIVE;
+        case "Steel":
+        case "Psychic":
+          return TypeEffectiveness.NOT_VERY_EFFECTIVE;
+        case "Dark":
+          return TypeEffectiveness.NO_EFFECT;
+        default:
+          return TypeEffectiveness.DEFAULT;
+      }
+    case "Ice":
+      switch (defenderType) {
+        case "Flying":
+        case "Ground":
+        case "Grass":
+        case "Dragon":
+          return TypeEffectiveness.SUPER_EFFECTIVE;
+        case "Steel":
+        case "Fire":
+        case "Water":
+        case "Ice":
+          return TypeEffectiveness.NOT_VERY_EFFECTIVE;
+        default:
+          return TypeEffectiveness.DEFAULT;
+      }
+    case "Dragon":
+      switch (defenderType) {
+        case "Dragon":
+          return TypeEffectiveness.SUPER_EFFECTIVE;
+        case "Steel":
+          return TypeEffectiveness.NOT_VERY_EFFECTIVE;
+        case "Fairy":
+          return TypeEffectiveness.NO_EFFECT;
+        default:
+          return TypeEffectiveness.DEFAULT;
+      }
+    case "Dark":
+      switch (defenderType) {
+        case "Ghost":
+        case "Psychic":
+          return TypeEffectiveness.SUPER_EFFECTIVE;
+        case "Fighting":
+        case "Dark":
+        case "Fairy":
+          return TypeEffectiveness.NOT_VERY_EFFECTIVE;
+        default:
+          return TypeEffectiveness.DEFAULT;
+      }
+    case "Fairy":
+      switch (defenderType) {
+        case "Fighting":
+        case "Dragon":
+        case "Dark":
+          return TypeEffectiveness.SUPER_EFFECTIVE;
+        case "Poison":
+        case "Steel":
+        case "Fire":
+          return TypeEffectiveness.NOT_VERY_EFFECTIVE;
+        default:
+          return TypeEffectiveness.DEFAULT;
+      }
     default:
       return TypeEffectiveness.DEFAULT;
   }
