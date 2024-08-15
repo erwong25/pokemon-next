@@ -139,16 +139,30 @@ export default function Page({
           if (partyPokemon == null) {
             return null;
           }
+          const partyPokemonHP = playerRosterHP.get(item)?.currentHP;
+          if (partyPokemonHP == null) {
+            return null;
+          }
           return (
             <div
               key={`${item}`}
-              className="bg-blue-600 flex h-28 rounded-md rounded-tl-3xl"
+              className="bg-blue-600 flex h-28 rounded-md rounded-tl-3xl w-[300px]"
             >
               <div className="bg-white flex justify-center m-auto w-[100px]">
                 <Image src={partyPokemon.staticSprite} alt="" />
               </div>
-              <div className="bg-green-600 content-center">
+              <div className="bg-green-600 content-center w-[180px] p-[20px]">
                 {partyPokemon.name}
+                <div className="w-[140px] bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                  <div
+                    className={`bg-orange-600 h-2.5 rounded-full w-[${
+                      (partyPokemonHP / calculateMaxHP(partyPokemon)) * 100
+                    }%]`}
+                  ></div>
+                </div>
+                <div className="flex justify-end">
+                  {partyPokemonHP}/{calculateMaxHP(partyPokemon)}
+                </div>
               </div>
             </div>
           );
