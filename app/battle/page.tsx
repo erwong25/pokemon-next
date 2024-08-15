@@ -49,7 +49,7 @@ export default function Page({
     return;
   }
 
-  console.log(playerRosterHP);
+  // console.log(playerRosterHP);
   return (
     <div>
       <div className="flex justify-end">
@@ -133,7 +133,27 @@ export default function Page({
           </button>
         ))}
       </div>
-
+      <div className="bg-red-600 w-fit flex grid grid-cols-2 gap-4 p-4 mx-auto">
+        {Array.from(playerRosterHP.keys()).map((item) => {
+          const partyPokemon = playerRosterHP.get(item)?.pokemon;
+          if (partyPokemon == null) {
+            return null;
+          }
+          return (
+            <div
+              key={`${item}`}
+              className="bg-blue-600 flex h-28 rounded-md rounded-tl-3xl"
+            >
+              <div className="bg-white flex justify-center m-auto w-[100px]">
+                <Image src={partyPokemon.staticSprite} alt="" />
+              </div>
+              <div className="bg-green-600 content-center">
+                {partyPokemon.name}
+              </div>
+            </div>
+          );
+        })}
+      </div>
       <button
         onClick={() => {
           setPlayerRosterHP(

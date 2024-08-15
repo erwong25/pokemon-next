@@ -7,27 +7,6 @@ export enum TypeEffectiveness {
   DEFAULT = 1,
 }
 
-const NORMAL_EFFECTIVENESS_MAP = new Map<Type, TypeEffectiveness>([
-  ["Normal", TypeEffectiveness.DEFAULT],
-  ["Fighting", TypeEffectiveness.DEFAULT],
-  ["Flying", TypeEffectiveness.DEFAULT],
-  ["Poison", TypeEffectiveness.DEFAULT],
-  ["Ground", TypeEffectiveness.DEFAULT],
-  ["Rock", TypeEffectiveness.NOT_VERY_EFFECTIVE],
-  ["Bug", TypeEffectiveness.DEFAULT],
-  ["Ghost", TypeEffectiveness.NO_EFFECT],
-  ["Steel", TypeEffectiveness.NOT_VERY_EFFECTIVE],
-  ["Water", TypeEffectiveness.DEFAULT],
-  ["Fire", TypeEffectiveness.DEFAULT],
-  ["Grass", TypeEffectiveness.DEFAULT],
-  ["Electric", TypeEffectiveness.DEFAULT],
-  ["Psychic", TypeEffectiveness.DEFAULT],
-  ["Ice", TypeEffectiveness.DEFAULT],
-  ["Dragon", TypeEffectiveness.DEFAULT],
-  ["Dark", TypeEffectiveness.DEFAULT],
-  ["Fairy", TypeEffectiveness.DEFAULT],
-]);
-
 export default function typeEffectivenessCalc(
   moveType: Type,
   defenderType: Type
@@ -288,6 +267,27 @@ export default function typeEffectivenessCalc(
       return TypeEffectiveness.DEFAULT;
   }
 }
+
+// const NORMAL_EFFECTIVENESS_MAP = new Map<Type, TypeEffectiveness>([
+//   ["Normal", TypeEffectiveness.DEFAULT],
+//   ["Fighting", TypeEffectiveness.DEFAULT],
+//   ["Flying", TypeEffectiveness.DEFAULT],
+//   ["Poison", TypeEffectiveness.DEFAULT],
+//   ["Ground", TypeEffectiveness.DEFAULT],
+//   ["Rock", TypeEffectiveness.NOT_VERY_EFFECTIVE],
+//   ["Bug", TypeEffectiveness.DEFAULT],
+//   ["Ghost", TypeEffectiveness.NO_EFFECT],
+//   ["Steel", TypeEffectiveness.NOT_VERY_EFFECTIVE],
+//   ["Water", TypeEffectiveness.DEFAULT],
+//   ["Fire", TypeEffectiveness.DEFAULT],
+//   ["Grass", TypeEffectiveness.DEFAULT],
+//   ["Electric", TypeEffectiveness.DEFAULT],
+//   ["Psychic", TypeEffectiveness.DEFAULT],
+//   ["Ice", TypeEffectiveness.DEFAULT],
+//   ["Dragon", TypeEffectiveness.DEFAULT],
+//   ["Dark", TypeEffectiveness.DEFAULT],
+//   ["Fairy", TypeEffectiveness.DEFAULT],
+// ]);
 
 // export const TYPE_EFFECTIVENESS_MAP: Map<
 //   Type,
