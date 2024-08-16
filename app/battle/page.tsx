@@ -48,8 +48,19 @@ export default function Page({
   if (startingPlayerPokemon == null) {
     return;
   }
+  const placeholderMoves = [];
+  for (let i = 0; i < 4 - activePlayerPokemon.moves.length; i++) {
+    placeholderMoves.push(
+      <div className="bg-gray-600 py-2 w-[130px] border border-gray-400 rounded shadow mx-auto my-2 h-[2.6rem]"></div>
+    );
+  }
+  const placeholderParty = [];
+  for (let i = 0; i < 6 - playerRosterHP.size; i++) {
+    placeholderParty.push(
+      <div className="bg-gray-600 flex h-28 rounded-md rounded-tl-3xl w-[300px]"></div>
+    );
+  }
 
-  // console.log(playerRosterHP);
   return (
     <div>
       <div className="flex justify-end">
@@ -60,11 +71,11 @@ export default function Page({
           Reset
         </Link>
       </div>
-      <div className="flex bg-green-600 justify-center mt-48">
+      <div className="flex bg-green-600 justify-center mt-24 h-[400px]">
         <div className="bg-orange-600 content-center">
           {activePlayerPokemon.name}: {activePlayerHP}
         </div>
-        <div className="bg-white flex justify-center w-[500px] h-[200px]">
+        <div className="bg-white relative flex justify-center my-auto w-[500px] h-[400px]">
           <div className="bg-red-600 scale-x-[-2] scale-y-[2] m-auto">
             <Image
               className=""
@@ -79,18 +90,31 @@ export default function Page({
               alt=""
             />
           </div>
+          <div className="bg-red-600 absolute text-black bottom-0 h-[4.5rem]">
+            {combatText(
+              activePlayerPokemon.name,
+              activeOpponentPokemon.name,
+              activePlayerMove,
+              damageDealt
+            )}
+            {combatText(
+              activeOpponentPokemon.name,
+              activePlayerPokemon.name,
+              activeOpponentMove,
+              damageReceived
+            )}
+            {activePlayerHP <= 0 && <p>{activePlayerPokemon.name} fainted</p>}
+          </div>
         </div>
         <div className="bg-orange-600 content-center">
           {activeOpponentPokemon.name}: {activeOpponentHP}
         </div>
       </div>
-
-      {activePlayerHP <= 0 && <p>{activePlayerPokemon.name} fainted</p>}
       <div className="bg-purple-600 flex grid grid-cols-2 w-[300px] mx-auto my-2">
         {activePlayerPokemon.moves.map((item) => (
           <button
             key={`${item}`}
-            className="bg-gray-300 hover:bg-gray-500 text-gray-800 py-2 w-[130px] border border-gray-400 rounded shadow mx-auto my-2"
+            className="bg-gray-300 hover:bg-gray-500 text-gray-800 py-2 w-[130px] border border-gray-400 rounded shadow mx-auto my-2 h-[2.6rem]"
             onClick={() => {
               const opponentMove =
                 activeOpponentPokemon.moves[
@@ -132,6 +156,7 @@ export default function Page({
             {item.name}
           </button>
         ))}
+        {placeholderMoves}
       </div>
       <div className="bg-red-600 w-fit flex grid grid-cols-2 gap-4 p-4 mx-auto">
         {Array.from(playerRosterHP.keys()).map((item) => {
@@ -144,15 +169,15 @@ export default function Page({
             return null;
           }
           return (
-            <div
+            <button
               key={`${item}`}
-              className="bg-blue-600 flex h-28 rounded-md rounded-tl-3xl w-[300px]"
+              className="bg-blue-600 flex items-center h-28 rounded-md rounded-tl-3xl w-[300px]"
             >
               <div className="bg-white flex justify-center m-auto w-[100px]">
                 <Image src={partyPokemon.staticSprite} alt="" />
               </div>
               <div className="bg-green-600 content-center w-[180px] p-[20px]">
-                {partyPokemon.name}
+                <span className="flex justify-start">{partyPokemon.name}</span>
                 <div className="w-[140px] bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
                   <div
                     className={`bg-orange-600 h-2.5 rounded-full w-[${
@@ -160,13 +185,15 @@ export default function Page({
                     }%]`}
                   ></div>
                 </div>
-                <div className="flex justify-end">
+                <span className="flex justify-end">
                   {partyPokemonHP}/{calculateMaxHP(partyPokemon)}
-                </div>
+                </span>
               </div>
-            </div>
+            </button>
           );
         })}
+        {placeholderParty}
+        {/* <div className="bg-blue-600 flex h-28 rounded-md rounded-tl-3xl w-[300px]"></div> */}
       </div>
       <button
         onClick={() => {
@@ -187,20 +214,9 @@ export default function Page({
           }
         }}
       >
+        <div className="bg-pink-600">hover over content</div>
         Switch
       </button>
-      {combatText(
-        activePlayerPokemon.name,
-        activePlayerPokemon.name,
-        activePlayerMove,
-        damageDealt
-      )}
-      {combatText(
-        activeOpponentPokemon.name,
-        activeOpponentPokemon.name,
-        activeOpponentMove,
-        damageReceived
-      )}
     </div>
   );
 }

@@ -12,3 +12,5 @@ Battle page
 
 - How to implement onclick for party window
   -Make each tile a button instead of a div? can you put divs inside buttons? (i think so?)
+
+Implementing reusable styling for components (like buttons, pokemon party cards)
