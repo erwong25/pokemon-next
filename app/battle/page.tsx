@@ -2,7 +2,8 @@
 
 import React from "react";
 import { useState } from "react";
-import { POKEMON_LIST, POKEMONS } from "../lib/pokemon";
+import { POKEMON_LIST, POKEMONS, Pokemon, BULBASAUR } from "../lib/pokemon";
+import { MOVES, TACKLE, type Move } from "../lib/moves";
 import type { CombatOutcome } from "../lib/damageCalculations";
 import Image from "next/image";
 import calculateMaxHP from "../lib/calculateMaxHP";
@@ -25,6 +26,7 @@ export default function Page({
   const startingOpponentPokemon = Object.keys(POKEMONS)[
     Math.floor(Math.random() * Object.keys(POKEMONS).length)
   ] as keyof POKEMON_LIST;
+  type displayContent = Pokemon | Move | "";
   const [activePlayerPokemon, setActivePlayerPokemon] = useState(
     POKEMONS[startingPlayerPokemon]
   );
@@ -48,6 +50,7 @@ export default function Page({
   if (startingPlayerPokemon == null) {
     return;
   }
+  const [displayArea, setDisplayArea] = useState<displayContent>("");
   const placeholderMoves = [];
   for (let i = 0; i < 4 - activePlayerPokemon.moves.length; i++) {
     placeholderMoves.push(
@@ -59,6 +62,9 @@ export default function Page({
     placeholderParty.push(
       <div className="bg-gray-600 flex h-28 rounded-md rounded-tl-3xl w-[300px]"></div>
     );
+  }
+  function generateDisplayArea(displayArea: displayContent): React.ReactNode {
+    if (typeof displayArea == "Move") return <div></div>;
   }
 
   return (
@@ -115,6 +121,7 @@ export default function Page({
           <button
             key={`${item}`}
             className="bg-gray-300 hover:bg-gray-500 text-gray-800 py-2 w-[130px] border border-gray-400 rounded shadow mx-auto my-2 h-[2.6rem]"
+            onMouseOver={() => setDisplayArea(TACKLE)}
             onClick={() => {
               const opponentMove =
                 activeOpponentPokemon.moves[
@@ -214,7 +221,7 @@ export default function Page({
           }
         }}
       >
-        <div className="bg-pink-600">hover over content</div>
+        <div className="bg-pink-600">{generateDisplayArea(displayArea)}</div>
         Switch
       </button>
     </div>

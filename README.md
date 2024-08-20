@@ -11,6 +11,6 @@ Battle page
 -Summary button: transisition from 6 tiles to enlarge selected tile
 
 - How to implement onclick for party window
-  -Make each tile a button instead of a div? can you put divs inside buttons? (i think so?)
+  -do move over move off
 
 Implementing reusable styling for components (like buttons, pokemon party cards)
