@@ -14,3 +14,7 @@ Battle page
   -do move over move off
 
 Implementing reusable styling for components (like buttons, pokemon party cards)
+
+Move functions and button out into components
+
+Pass in roster entry instead of raw pokemon into generateDisplayArea
