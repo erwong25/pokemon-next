@@ -3,6 +3,27 @@ import type { Type } from "./types";
 import { MOVES, type Move } from "./moves";
 import { StaticImageData } from "next/image";
 
+const colorVariants = {
+  Normal: "bg-Normal",
+  Fighting: "bg-Fighting",
+  Flying: "bg-Flying",
+  Poison: "bg-Poison",
+  Ground: "bg-Ground",
+  Rock: "bg-Rock",
+  Bug: "bg-Bug",
+  Ghost: "bg-Ghost",
+  Steel: "bg-Steel",
+  Water: "bg-Water",
+  Fire: "bg-Fire",
+  Grass: "bg-Grass",
+  Electric: "bg-Electric",
+  Psychic: "bg-Psychic",
+  Ice: "bg-Ice",
+  Dragon: "bg-Dragon",
+  Dark: "bg-Dark",
+  Fairy: "bg-Fairy",
+};
+
 type Stats = {
   atk: number;
   def: number;

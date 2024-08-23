@@ -10,11 +10,13 @@ Battle page
 -toggle to click on pokmone in party window to switch pokemon, display moves/type
 -Summary button: transisition from 6 tiles to enlarge selected tile
 
-- How to implement onclick for party window
-  -do move over move off
-
 Implementing reusable styling for components (like buttons, pokemon party cards)
 
 Move functions and button out into components
 
-Pass in roster entry instead of raw pokemon into generateDisplayArea
+**_How do i move the placeholders into a component?
+_**How to move buttons into components with state?
+
+pass onMOuseOver as prop to component
+
+Fix Damage Rollover

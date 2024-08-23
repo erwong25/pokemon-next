@@ -3,7 +3,6 @@
 import React from "react";
 import { useState } from "react";
 import { POKEMON_LIST, POKEMONS, Pokemon } from "../lib/pokemon";
-import { TACKLE, type Move } from "../lib/moves";
 import type { CombatOutcome } from "../lib/damageCalculations";
 import Image from "next/image";
 import calculateMaxHP from "../lib/calculateMaxHP";
@@ -12,6 +11,8 @@ import combatText from "../lib/combatText";
 import moveSelector from "../lib/moveSelector";
 import computeDamage from "../lib/damageCalculations";
 import Link from "next/link";
+import generateDisplayArea from "../lib/generateDisplayArea";
+import type { DisplayContent } from "../lib/generateDisplayArea";
 
 export default function Page({
   searchParams,
@@ -26,10 +27,6 @@ export default function Page({
   const startingOpponentPokemon = Object.keys(POKEMONS)[
     Math.floor(Math.random() * Object.keys(POKEMONS).length)
   ] as keyof POKEMON_LIST;
-  type DisplayContent = {
-    move?: Move;
-    pokemon?: Pokemon;
-  };
   const [activePlayerPokemon, setActivePlayerPokemon] = useState(
     POKEMONS[startingPlayerPokemon]
   );
@@ -66,58 +63,11 @@ export default function Page({
       <div className="bg-gray-600 flex h-28 rounded-md rounded-tl-3xl w-[300px]"></div>
     );
   }
-  function generateDisplayArea(
-    displayArea?: DisplayContent | null
-  ): React.ReactNode {
-    if (displayArea == null) return;
-    if (displayArea.move != null) {
-      return (
-        <div>
-          <div>{displayArea.move.name}</div>
-          <div className="flex">
-            <div className="bg-red-600">{displayArea.move.type}</div>
-            <div className="bg-green-600 mx-4">
-              {displayArea.move.damageCategory}
-            </div>
-          </div>
-          <div className="flex">
-            <div>Power: {displayArea.move.power}</div>
-            <div className="mx-4">
-              Accuracy: {displayArea.move.accuracy * 100}%
-            </div>
-          </div>
-        </div>
-      );
-    } else if (displayArea.pokemon != null) {
-      return (
-        <div>
-          <div>{displayArea.pokemon.name}</div>
-          <div className="flex">
-            <div>{displayArea.pokemon.types[0]}</div>
-            <div className="mx-4">{displayArea.pokemon.types[1]}</div>
-          </div>
-          <hr></hr>
-          <div>Stats:</div>
-          <div>HP: {calculateMaxHP(displayArea.pokemon)}</div>
-          <div>Attack: {displayArea.pokemon.stats.atk}</div>
-          <div>Defense: {displayArea.pokemon.stats.def}</div>
-          <div>Sp. Attack: {displayArea.pokemon.stats.spAtk}</div>
-          <div>Sp. Defense: {displayArea.pokemon.stats.spDef}</div>
-          <div>Speed: {displayArea.pokemon.stats.sp}</div>
-          <hr></hr>
-          <div>Moves:</div>
-          <div>{displayArea.pokemon.moves[0]?.name}</div>
-          <div>{displayArea.pokemon.moves[1]?.name}</div>
-          <div>{displayArea.pokemon.moves[2]?.name}</div>
-          <div>{displayArea.pokemon.moves[3]?.name}</div>
-        </div>
-      );
-    }
-  }
 
   return (
     <div>
       <div className="flex justify-end">
+        {/*why does this not move when it is a button insetad of div */}
         <Link
           className="bg-gray-300 hover:bg-gray-500 text-gray-800 px-1 border border-gray-400 rounded shadow"
           href={"/"}
@@ -127,7 +77,17 @@ export default function Page({
       </div>
       <div className="flex bg-green-600 justify-center mt-24 h-[400px]">
         <div className="bg-orange-600 content-center">
-          {activePlayerPokemon.name}: {activePlayerHP}
+          <span className="flex justify-start">{activePlayerPokemon.name}</span>
+          <div className="w-[140px] bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+            <div
+              className={`bg-green-600 h-2.5 rounded-full w-[${
+                (activePlayerHP / calculateMaxHP(activePlayerPokemon)) * 100
+              }%]`}
+            ></div>
+          </div>
+          <span className="flex justify-end">
+            {activePlayerHP}/{calculateMaxHP(activePlayerPokemon)}
+          </span>
         </div>
         <div className="bg-white relative flex justify-center my-auto w-[500px] h-[400px]">
           <div className="bg-red-600 scale-x-[-2] scale-y-[2] m-auto">
@@ -161,13 +121,29 @@ export default function Page({
           </div>
         </div>
         <div className="bg-orange-600 content-center">
-          {activeOpponentPokemon.name}: {activeOpponentHP}
+          <span className="flex justify-start">
+            {activeOpponentPokemon.name}
+          </span>
+          <div className="w-[140px] bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+            <div
+              style={{
+                width: `${
+                  (activeOpponentHP / calculateMaxHP(activeOpponentPokemon)) *
+                  100
+                }%`,
+              }}
+              className={`bg-green-600 h-2.5 rounded-full`}
+            ></div>
+          </div>
+          <span className="flex justify-end">
+            {activeOpponentHP}/{calculateMaxHP(activeOpponentPokemon)}
+          </span>
         </div>
       </div>
       <div className="flex bg-yellow-600 justify-center">
         <div className="bg-pink-600 w-[650px] mr-1">
           <div className="absolute">Select Move:</div>
-          <div className="bg-purple-600 flex grid grid-cols-2 w-[300px] mx-auto my-2">
+          <div className="bg-gray-200 flex grid grid-cols-2 w-[300px] mx-auto my-2">
             {activePlayerPokemon.moves.map((item) => (
               <button
                 key={`${item}`}
@@ -220,7 +196,7 @@ export default function Page({
           <div className="">Switch:</div>
           <div className="bg-red-600 w-fit flex grid grid-cols-2 gap-4 p-4 pt-0 mx-auto">
             {Array.from(playerRosterHP.keys()).map((item) => {
-              const partyPokemon = playerRosterHP.get(item)?.pokemon;
+              const partyPokemon = playerRosterHP.get(item);
               if (partyPokemon == null) {
                 return null;
               }
@@ -231,26 +207,30 @@ export default function Page({
               return (
                 <button
                   key={`${item}`}
-                  onMouseOver={() => setDisplayArea({ pokemon: partyPokemon })}
-                  onMouseOut={() => setDisplayArea(null)}
+                  onMouseOver={() =>
+                    setDisplayArea({ rosterEntry: partyPokemon })
+                  }
+                  // onMouseOut={() => setDisplayArea(null)}
                   className="bg-blue-600 flex items-center h-28 rounded-md rounded-tl-3xl w-[300px]"
                 >
                   <div className="bg-white flex justify-center m-auto w-[100px]">
-                    <Image src={partyPokemon.staticSprite} alt="" />
+                    <Image src={partyPokemon.pokemon.staticSprite} alt="" />
                   </div>
                   <div className="bg-green-600 content-center w-[180px] p-[20px]">
                     <span className="flex justify-start">
-                      {partyPokemon.name}
+                      {partyPokemon.pokemon.name}
                     </span>
                     <div className="w-[140px] bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
                       <div
                         className={`bg-orange-600 h-2.5 rounded-full w-[${
-                          (partyPokemonHP / calculateMaxHP(partyPokemon)) * 100
+                          (partyPokemonHP /
+                            calculateMaxHP(partyPokemon.pokemon)) *
+                          100
                         }%]`}
                       ></div>
                     </div>
                     <span className="flex justify-end">
-                      {partyPokemonHP}/{calculateMaxHP(partyPokemon)}
+                      {partyPokemonHP}/{calculateMaxHP(partyPokemon.pokemon)}
                     </span>
                   </div>
                 </button>
@@ -260,12 +240,13 @@ export default function Page({
             {/* <div className="bg-blue-600 flex h-28 rounded-md rounded-tl-3xl w-[300px]"></div> */}
           </div>
         </div>
-        <div className="bg-blue-600 ml-1 my-2 w-[650px] rounded-xl py-4 px-6">
+        <div className="bg-gray-200 ml-1 my-2 w-[650px] rounded-xl py-4 px-6">
           {generateDisplayArea(displayArea)}
         </div>
       </div>
 
       <button
+        className="bg-white"
         onClick={() => {
           setPlayerRosterHP(
             playerRosterHP.set(activePlayerPokemon.name, {
