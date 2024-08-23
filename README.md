@@ -19,4 +19,6 @@ _**How to move buttons into components with state?
 
 pass onMOuseOver as prop to component
 
-Fix Damage Rollover
+<!-- Fix Damage Rollover -->
+
+Add turn order based on speed

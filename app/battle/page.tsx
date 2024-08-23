@@ -6,13 +6,14 @@ import { POKEMON_LIST, POKEMONS, Pokemon } from "../lib/pokemon";
 import type { CombatOutcome } from "../lib/damageCalculations";
 import Image from "next/image";
 import calculateMaxHP from "../lib/calculateMaxHP";
-import generatePlayerRoster from "../lib/generatePlayerRoster";
+import generatePlayerRoster, { RosterEntry } from "../lib/generatePlayerRoster";
 import combatText from "../lib/combatText";
 import moveSelector from "../lib/moveSelector";
 import computeDamage from "../lib/damageCalculations";
 import Link from "next/link";
 import generateDisplayArea from "../lib/generateDisplayArea";
 import type { DisplayContent } from "../lib/generateDisplayArea";
+import generatePartyButtons from "../ui/battle/generatePartyButtons";
 
 export default function Page({
   searchParams,
@@ -66,16 +67,7 @@ export default function Page({
 
   return (
     <div>
-      <div className="flex justify-end">
-        {/*why does this not move when it is a button insetad of div */}
-        <Link
-          className="bg-gray-300 hover:bg-gray-500 text-gray-800 px-1 border border-gray-400 rounded shadow"
-          href={"/"}
-        >
-          Reset
-        </Link>
-      </div>
-      <div className="flex bg-green-600 justify-center mt-24 h-[400px]">
+      <div className="flex bg-green-600 justify-center h-[400px]">
         <div className="bg-orange-600 content-center">
           <span className="flex justify-start">{activePlayerPokemon.name}</span>
           <div className="w-[140px] bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
@@ -139,6 +131,15 @@ export default function Page({
             {activeOpponentHP}/{calculateMaxHP(activeOpponentPokemon)}
           </span>
         </div>
+        <button className="flex justify-end">
+          {/*why does this not move when it is a button insetad of div */}
+          <Link
+            className="bg-gray-300 hover:bg-gray-500 text-gray-800 px-1 border border-gray-400 rounded shadow"
+            href={"/"}
+          >
+            Reset
+          </Link>
+        </button>
       </div>
       <div className="flex bg-yellow-600 justify-center">
         <div className="bg-pink-600 w-[650px] mr-1">
@@ -168,9 +169,11 @@ export default function Page({
                     setDamageDealt("No effect");
                   } else {
                     setDamageDealt(attackDamage);
-                    setActiveOpponentHP(activeOpponentHP - attackDamage);
                     if (activeOpponentHP - attackDamage <= 0) {
+                      setActiveOpponentHP(0);
                       setActiveOpponentPokemon(POKEMONS.ARTICUNO);
+                    } else {
+                      setActiveOpponentHP(activeOpponentHP - attackDamage);
                     }
                   }
                   const opponentDamage = computeDamage(
@@ -184,7 +187,11 @@ export default function Page({
                     setDamageReceived("No effect");
                   } else {
                     setDamageReceived(opponentDamage);
-                    setActivePlayerHP(activePlayerHP - opponentDamage);
+                    if (activePlayerHP - opponentDamage <= 0) {
+                      setActivePlayerHP(0);
+                    } else {
+                      setActivePlayerHP(activePlayerHP - opponentDamage);
+                    }
                   }
                 }}
               >
@@ -195,49 +202,10 @@ export default function Page({
           </div>
           <div className="">Switch:</div>
           <div className="bg-red-600 w-fit flex grid grid-cols-2 gap-4 p-4 pt-0 mx-auto">
-            {Array.from(playerRosterHP.keys()).map((item) => {
-              const partyPokemon = playerRosterHP.get(item);
-              if (partyPokemon == null) {
-                return null;
-              }
-              const partyPokemonHP = playerRosterHP.get(item)?.currentHP;
-              if (partyPokemonHP == null) {
-                return null;
-              }
-              return (
-                <button
-                  key={`${item}`}
-                  onMouseOver={() =>
-                    setDisplayArea({ rosterEntry: partyPokemon })
-                  }
-                  // onMouseOut={() => setDisplayArea(null)}
-                  className="bg-blue-600 flex items-center h-28 rounded-md rounded-tl-3xl w-[300px]"
-                >
-                  <div className="bg-white flex justify-center m-auto w-[100px]">
-                    <Image src={partyPokemon.pokemon.staticSprite} alt="" />
-                  </div>
-                  <div className="bg-green-600 content-center w-[180px] p-[20px]">
-                    <span className="flex justify-start">
-                      {partyPokemon.pokemon.name}
-                    </span>
-                    <div className="w-[140px] bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-                      <div
-                        className={`bg-orange-600 h-2.5 rounded-full w-[${
-                          (partyPokemonHP /
-                            calculateMaxHP(partyPokemon.pokemon)) *
-                          100
-                        }%]`}
-                      ></div>
-                    </div>
-                    <span className="flex justify-end">
-                      {partyPokemonHP}/{calculateMaxHP(partyPokemon.pokemon)}
-                    </span>
-                  </div>
-                </button>
-              );
-            })}
+            {generatePartyButtons(playerRosterHP, (partyPokemon: RosterEntry) =>
+              setDisplayArea({ rosterEntry: partyPokemon })
+            )}
             {placeholderParty}
-            {/* <div className="bg-blue-600 flex h-28 rounded-md rounded-tl-3xl w-[300px]"></div> */}
           </div>
         </div>
         <div className="bg-gray-200 ml-1 my-2 w-[650px] rounded-xl py-4 px-6">
