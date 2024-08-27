@@ -17,8 +17,10 @@ Move functions and button out into components
 **_How do i move the placeholders into a component?
 _**How to move buttons into components with state?
 
-pass onMOuseOver as prop to component
+<!-- pass onMOuseOver as prop to component -->
 
 <!-- Fix Damage Rollover -->
 
 Add turn order based on speed
+
+Fix pokemon fainting
