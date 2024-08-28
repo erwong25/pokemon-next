@@ -30,9 +30,8 @@ export default function Page({
   const startingOpponentPokemon = Object.keys(POKEMONS)[
     Math.floor(Math.random() * Object.keys(POKEMONS).length)
   ] as keyof POKEMON_LIST;
-  const [activePlayerPokemon, setActivePlayerPokemon] = useState(
-    POKEMONS[startingPlayerPokemon]
-  );
+  const [activePlayerRosterIdentifier, setActivePlayerRosterIdentifier] =
+    useState(POKEMONS[startingPlayerPokemon].name);
   const [activeOpponentPokemon, setActiveOpponentPokemon] = useState(
     POKEMONS[startingOpponentPokemon]
   );
@@ -55,6 +54,12 @@ export default function Page({
     return;
   }
 
+  const activePlayerPokemon = playerRoster.get(
+    activePlayerRosterIdentifier
+  )?.pokemon;
+  if (activePlayerPokemon == undefined) {
+    return;
+  }
   const theActivePlayerHP = playerRoster.get(
     activePlayerPokemon.name
   )?.currentHP;
@@ -62,7 +67,14 @@ export default function Page({
     return;
   }
 
+  function handlePartyOnClick(item: string) {
+    setActivePlayerRosterIdentifier(item);
+  }
+
   function handleMoveOnClick(item: Move) {
+    if (activePlayerPokemon == undefined) {
+      return;
+    }
     const opponentMove =
       activeOpponentPokemon.moves[moveSelector(activeOpponentPokemon)];
     setActiveOpponentMove(opponentMove.name);
@@ -115,10 +127,6 @@ export default function Page({
         );
       }
     }
-  }
-
-  function handlePartyOnClick(item: string) {
-    setActivePlayerPokemon(POKEMONS.item);
   }
 
   return (
@@ -222,7 +230,7 @@ export default function Page({
           {generateDisplayArea(displayArea)}
         </div>
       </div>
-      <button
+      {/* <button
         className="bg-white"
         onClick={() => {
           setPlayerRoster(
@@ -231,7 +239,7 @@ export default function Page({
               currentHP: activePlayerHP,
             })
           );
-          setActivePlayerPokemon(POKEMONS.GENGAR);
+          setActivePlayerRosterIdentifier(POKEMONS.GENGAR);
           if (!playerRoster.has(POKEMONS.GENGAR.name)) {
             setPlayerRoster(
               playerRoster.set("pokemon", {
@@ -243,7 +251,7 @@ export default function Page({
         }}
       >
         Switch
-      </button>
+      </button> */}
     </div>
   );
 }

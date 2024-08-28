@@ -1,5 +1,6 @@
 import calculateMaxHP from "@/app/lib/calculateMaxHP";
 import { RosterEntry } from "@/app/lib/generatePlayerRoster";
+import { POKEMON_LIST } from "@/app/lib/pokemon";
 import Image from "next/image";
 
 export default function generatePartyButtons(
