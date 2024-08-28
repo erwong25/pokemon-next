@@ -4,7 +4,8 @@ import Image from "next/image";
 
 export default function generatePartyButtons(
   playerRosterHP: Map<string, RosterEntry>,
-  onMouseOver: (partyPokemon: RosterEntry) => void
+  onMouseOver: (partyPokemon: RosterEntry) => void,
+  onClick: (item: string) => void
 ): React.ReactNode {
   const placeholderParty = [];
   for (let i = 0; i < 6 - playerRosterHP.size; i++) {
@@ -27,6 +28,7 @@ export default function generatePartyButtons(
           <button
             key={`${item}`}
             onMouseOver={() => onMouseOver(partyPokemon)}
+            onClick={() => onClick(item)}
             //   onMouseOver={() => setDisplayArea({ rosterEntry: partyPokemon })}
             // onMouseOut={() => setDisplayArea(null)}
             className="bg-blue-600 flex items-center h-28 rounded-md rounded-tl-3xl w-[300px]"

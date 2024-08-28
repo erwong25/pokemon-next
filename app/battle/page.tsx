@@ -50,10 +50,17 @@ export default function Page({
     generatePlayerRoster(roster)
   );
   const [opponentRosterHP, setOpponentRosterHP] = useState(""); // not implemented at all yet
+  const [displayArea, setDisplayArea] = useState<DisplayContent | null>(null);
   if (startingPlayerPokemon == null) {
     return;
   }
-  const [displayArea, setDisplayArea] = useState<DisplayContent | null>(null);
+
+  const theActivePlayerHP = playerRoster.get(
+    activePlayerPokemon.name
+  )?.currentHP;
+  if (theActivePlayerHP == undefined) {
+    return;
+  }
 
   function handleMoveOnClick(item: Move) {
     const opponentMove =
@@ -65,6 +72,9 @@ export default function Page({
       activePlayerPokemon,
       activeOpponentPokemon
     );
+    if (theActivePlayerHP == undefined) {
+      return;
+    }
     if (attackDamage === "Miss") {
       setDamageDealt("Miss");
     } else if (attackDamage === "No effect") {
@@ -89,7 +99,7 @@ export default function Page({
       setDamageReceived("No effect");
     } else {
       setDamageReceived(opponentDamage);
-      if (activePlayerHP - opponentDamage <= 0) {
+      if (theActivePlayerHP - opponentDamage <= 0) {
         setPlayerRoster(
           playerRoster.set(activePlayerPokemon.name, {
             pokemon: activePlayerPokemon,
@@ -100,11 +110,15 @@ export default function Page({
         setPlayerRoster(
           playerRoster.set(activePlayerPokemon.name, {
             pokemon: activePlayerPokemon,
-            currentHP: activePlayerHP - opponentDamage,
+            currentHP: theActivePlayerHP - opponentDamage,
           })
         );
       }
     }
+  }
+
+  function handlePartyOnClick(item: string) {
+    setActivePlayerPokemon(POKEMONS.item);
   }
 
   return (
@@ -116,14 +130,15 @@ export default function Page({
             <div
               style={{
                 width: `${
-                  (activePlayerHP / calculateMaxHP(activePlayerPokemon)) * 100
+                  (theActivePlayerHP / calculateMaxHP(activePlayerPokemon)) *
+                  100
                 }%`,
               }}
               className={`bg-green-600 h-2.5 rounded-full`}
             ></div>
           </div>
           <span className="flex justify-end">
-            {activePlayerHP}/{calculateMaxHP(activePlayerPokemon)}
+            {theActivePlayerHP}/{calculateMaxHP(activePlayerPokemon)}
           </span>
         </div>
         <div className="bg-white relative flex justify-center my-auto w-[500px] h-[400px]">
@@ -154,7 +169,9 @@ export default function Page({
               activeOpponentMove,
               damageReceived
             )}
-            {activePlayerHP <= 0 && <p>{activePlayerPokemon.name} fainted</p>}
+            {theActivePlayerHP <= 0 && (
+              <p>{activePlayerPokemon.name} fainted</p>
+            )}
           </div>
         </div>
         <div className="bg-orange-600 content-center">
@@ -194,8 +211,11 @@ export default function Page({
             (item) => handleMoveOnClick(item)
           )}
           <div className="">Switch:</div>
-          {generatePartyButtons(playerRoster, (partyPokemon: RosterEntry) =>
-            setDisplayArea({ rosterEntry: partyPokemon })
+          {generatePartyButtons(
+            playerRoster,
+            (partyPokemon: RosterEntry) =>
+              setDisplayArea({ rosterEntry: partyPokemon }),
+            (item) => handlePartyOnClick(item)
           )}
         </div>
         <div className="bg-gray-200 ml-1 my-2 w-[650px] rounded-xl py-4 px-6">

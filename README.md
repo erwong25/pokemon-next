@@ -24,3 +24,5 @@ _**How to move buttons into components with state?
 Add turn order based on speed
 
 Fix pokemon fainting
+
+should i try to get rid of activePlayerHP and just reference from playerRoster instead? seems like a lot of extra steps due to doing map.get()
