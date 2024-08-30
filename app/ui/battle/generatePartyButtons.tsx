@@ -11,7 +11,10 @@ export default function generatePartyButtons(
   const placeholderParty = [];
   for (let i = 0; i < 6 - playerRosterHP.size; i++) {
     placeholderParty.push(
-      <div className="bg-gray-600 flex h-28 rounded-md rounded-tl-3xl w-[300px]"></div>
+      <div
+        key={`placeholderParty${i}`}
+        className="bg-gray-600 flex h-28 rounded-md rounded-tl-3xl w-[300px]"
+      ></div>
     );
   }
   return (

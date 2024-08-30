@@ -1,21 +1,17 @@
 Switch functionality still needs work
 -update state when switching
 
-Party window - make shared component between home and battle page
+Party window - make shared component between home and battle page \* ask michael on how to get this implemented
+--generate buttons without having the button functionality, can extra classes be added to it to customize for each page?
 -identify differences between the two pages
 -HP bar on battle page does not reflect current HP of the pokemon
 
-Battle page
--Switch and Summary button
--toggle to click on pokmone in party window to switch pokemon, display moves/type
--Summary button: transisition from 6 tiles to enlarge selected tile
-
 Implementing reusable styling for components (like buttons, pokemon party cards)
 
-Move functions and button out into components
+<!-- Move functions and button out into components -->
 
-**_How do i move the placeholders into a component?
-_**How to move buttons into components with state?
+<!-- **_How do i move the placeholders into a component?
+_**How to move buttons into components with state? -->
 
 <!-- pass onMOuseOver as prop to component -->
 
@@ -25,4 +21,9 @@ Add turn order based on speed
 
 Fix pokemon fainting
 
-should i try to get rid of activePlayerHP and just reference from playerRoster instead? seems like a lot of extra steps due to doing map.get()
+Move used displayed is wrong when pokemon faints, implementing turn order should fix this
+
+Party buttons hover over change appearance to indicate it is hovered on
+
+Red or Gray pokeballs to indicate how many pokemon and in which slots are remaining
+-maps are not ordered right? i should change the key to a number to then track the order of the pokemon (but then i might have to rewrite a bunch of lines that reference the key of the playerRoster T^T)

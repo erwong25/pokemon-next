@@ -27,19 +27,25 @@ export default function Page({
     Object.keys(POKEMONS).includes(pokemon)
   ) as Array<keyof POKEMON_LIST>;
   const startingPlayerPokemon = roster[0];
-  const startingOpponentPokemon = Object.keys(POKEMONS)[
-    Math.floor(Math.random() * Object.keys(POKEMONS).length)
-  ] as keyof POKEMON_LIST;
+  const clone = structuredClone(POKEMONS);
+  const randomRoster = [] as Array<keyof POKEMON_LIST>;
+  for (let i = 0; i < roster.length; i++) {
+    const randomPokemon = Object.keys(clone)[
+      Math.floor(Math.random() * Object.keys(clone).length)
+    ] as keyof POKEMON_LIST;
+    randomRoster.push(randomPokemon);
+    delete clone[randomPokemon];
+  }
+  const startingOpponentPokemon = randomRoster[0];
+  // const startingOpponentPokemon = Object.keys(POKEMONS)[
+  //   Math.floor(Math.random() * Object.keys(POKEMONS).length)
+  // ] as keyof POKEMON_LIST;
   const [activePlayerRosterIdentifier, setActivePlayerRosterIdentifier] =
     useState(POKEMONS[startingPlayerPokemon].name);
-  const [activeOpponentPokemon, setActiveOpponentPokemon] = useState(
-    POKEMONS[startingOpponentPokemon]
-  );
+  const [activeOpponentRosterIdentifier, setActiveOpponentRosterIdentifier] =
+    useState(POKEMONS[startingOpponentPokemon].name);
   const [damageDealt, setDamageDealt] = useState<CombatOutcome>(0);
   const [damageReceived, setDamageReceived] = useState<CombatOutcome>(0);
-  const [activePlayerHP, setActivePlayerHP] = useState(
-    calculateMaxHP(POKEMONS[startingPlayerPokemon])
-  );
   const [activeOpponentHP, setActiveOpponentHP] = useState(
     calculateMaxHP(POKEMONS[startingOpponentPokemon])
   );
@@ -48,22 +54,33 @@ export default function Page({
   const [playerRoster, setPlayerRoster] = useState(
     generatePlayerRoster(roster)
   );
-  const [opponentRosterHP, setOpponentRosterHP] = useState(""); // not implemented at all yet
+  const [opponentRoster, setOpponentRoster] = useState(
+    generatePlayerRoster(randomRoster)
+  );
   const [displayArea, setDisplayArea] = useState<DisplayContent | null>(null);
   if (startingPlayerPokemon == null) {
+    console.log("startingPlayerPokemon is null");
     return;
   }
 
   const activePlayerPokemon = playerRoster.get(
     activePlayerRosterIdentifier
   )?.pokemon;
-  if (activePlayerPokemon == undefined) {
+  const activeOpponentPokemon = opponentRoster.get(
+    activeOpponentRosterIdentifier
+  )?.pokemon;
+  if (activePlayerPokemon == undefined || activeOpponentPokemon == undefined) {
+    console.log("activePokemon is undefined");
     return;
   }
   const theActivePlayerHP = playerRoster.get(
     activePlayerPokemon.name
   )?.currentHP;
-  if (theActivePlayerHP == undefined) {
+  const theActiveOpponentHP = opponentRoster.get(
+    activeOpponentPokemon.name
+  )?.currentHP;
+  if (theActivePlayerHP == undefined || theActiveOpponentHP == undefined) {
+    console.log("theActiveHP is undefined");
     return;
   }
 
@@ -71,8 +88,25 @@ export default function Page({
     setActivePlayerRosterIdentifier(item);
   }
 
+  function randomTeamMember(roster: Map<string, RosterEntry>): string {
+    const aliveRoster: string[] = [];
+    roster.forEach((element) => {
+      if (element.currentHP != 0) {
+        aliveRoster.push(element.pokemon.name);
+      }
+    });
+    console.log(opponentRoster);
+    return aliveRoster[Math.floor(Math.random() * aliveRoster.length)];
+  }
+
   function handleMoveOnClick(item: Move) {
-    if (activePlayerPokemon == undefined) {
+    if (
+      activePlayerPokemon == undefined ||
+      activeOpponentPokemon == undefined ||
+      theActivePlayerHP == undefined ||
+      theActiveOpponentHP == undefined
+    ) {
+      console.log("98");
       return;
     }
     const opponentMove =
@@ -84,20 +118,32 @@ export default function Page({
       activePlayerPokemon,
       activeOpponentPokemon
     );
-    if (theActivePlayerHP == undefined) {
-      return;
-    }
+
     if (attackDamage === "Miss") {
       setDamageDealt("Miss");
     } else if (attackDamage === "No effect") {
       setDamageDealt("No effect");
     } else {
       setDamageDealt(attackDamage);
-      if (activeOpponentHP - attackDamage <= 0) {
-        setActiveOpponentHP(0);
-        setActiveOpponentPokemon(POKEMONS.ARTICUNO);
+      if (theActiveOpponentHP - attackDamage <= 0) {
+        setOpponentRoster(
+          opponentRoster.set(activeOpponentPokemon.name, {
+            pokemon: activeOpponentPokemon,
+            currentHP: 0,
+          })
+        );
+        setActiveOpponentRosterIdentifier(randomTeamMember(opponentRoster));
       } else {
-        setActiveOpponentHP(activeOpponentHP - attackDamage);
+        setOpponentRoster(
+          opponentRoster.set(activeOpponentPokemon.name, {
+            pokemon: activeOpponentPokemon,
+            currentHP: theActiveOpponentHP - attackDamage,
+          })
+        );
+        //   setActiveOpponentHP(0);
+        //   setActiveOpponentRosterIdentifier(randomTeamMember(opponentRoster));
+        // } else {
+        //   setActiveOpponentHP(theActiveOpponentHP - attackDamage);
       }
     }
     const opponentDamage = computeDamage(
@@ -190,7 +236,8 @@ export default function Page({
             <div
               style={{
                 width: `${
-                  (activeOpponentHP / calculateMaxHP(activeOpponentPokemon)) *
+                  (theActiveOpponentHP /
+                    calculateMaxHP(activeOpponentPokemon)) *
                   100
                 }%`,
               }}
@@ -198,7 +245,7 @@ export default function Page({
             ></div>
           </div>
           <span className="flex justify-end">
-            {activeOpponentHP}/{calculateMaxHP(activeOpponentPokemon)}
+            {theActiveOpponentHP}/{calculateMaxHP(activeOpponentPokemon)}
           </span>
         </div>
         <button className="flex justify-end">
