@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { POKEMON_LIST, POKEMONS, Pokemon } from "../lib/pokemon";
 import type { CombatOutcome } from "../lib/damageCalculations";
 import type { Move } from "../lib/moves";
@@ -58,6 +58,11 @@ export default function Page({
     generatePlayerRoster(randomRoster)
   );
   const [displayArea, setDisplayArea] = useState<DisplayContent | null>(null);
+  const [hydrated, setHydrated] = useState(false);
+  useEffect(() => {
+    setHydrated(true);
+  }, []);
+
   if (startingPlayerPokemon == null) {
     console.log("startingPlayerPokemon is null");
     return;
@@ -198,18 +203,23 @@ export default function Page({
         <div className="bg-white relative flex justify-center my-auto w-[500px] h-[400px]">
           <div className="bg-red-600 scale-x-[-2] scale-y-[2] m-auto">
             <Image
+              priority={true}
               className=""
               src={activePlayerPokemon.animatedSprite}
               alt=""
             />
           </div>
-          <div className="bg-blue-600 m-auto scale-[2]">
-            <Image
-              className=""
-              src={activeOpponentPokemon.animatedSprite}
-              alt=""
-            />
-          </div>
+          {hydrated && (
+            <div className="bg-blue-600 m-auto scale-[2]">
+              <Image
+                priority={true}
+                className=""
+                src={activeOpponentPokemon.animatedSprite}
+                alt=""
+                suppressHydrationWarning
+              />
+            </div>
+          )}
           <div className="bg-red-600 absolute text-black bottom-0 h-[4.5rem]">
             {combatText(
               activePlayerPokemon.name,
@@ -228,26 +238,34 @@ export default function Page({
             )}
           </div>
         </div>
-        <div className="bg-orange-600 content-center">
-          <span className="flex justify-start">
-            {activeOpponentPokemon.name}
-          </span>
-          <div className="w-[140px] bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+        {hydrated && (
+          <div
+            className="bg-orange-600 content-center"
+            suppressHydrationWarning
+          >
+            <span className="flex justify-start">
+              {activeOpponentPokemon.name}
+            </span>
             <div
-              style={{
-                width: `${
-                  (theActiveOpponentHP /
-                    calculateMaxHP(activeOpponentPokemon)) *
-                  100
-                }%`,
-              }}
-              className={`bg-green-600 h-2.5 rounded-full`}
-            ></div>
+              className="w-[140px] bg-gray-200 rounded-full h-2.5 dark:bg-gray-700"
+              suppressHydrationWarning
+            >
+              <div
+                style={{
+                  width: `${
+                    (theActiveOpponentHP /
+                      calculateMaxHP(activeOpponentPokemon)) *
+                    100
+                  }%`,
+                }}
+                className={`bg-green-600 h-2.5 rounded-full`}
+              ></div>
+            </div>
+            <span className="flex justify-end">
+              {theActiveOpponentHP}/{calculateMaxHP(activeOpponentPokemon)}
+            </span>
           </div>
-          <span className="flex justify-end">
-            {theActiveOpponentHP}/{calculateMaxHP(activeOpponentPokemon)}
-          </span>
-        </div>
+        )}
         <button className="flex justify-end">
           <Link
             className="bg-gray-300 hover:bg-gray-500 text-gray-800 px-1 border border-gray-400 rounded shadow"

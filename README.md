@@ -18,8 +18,12 @@ _**How to move buttons into components with state? -->
 <!-- Fix Damage Rollover -->
 
 Add turn order based on speed
+-logic for which attack resolves first
+-the calculate if something changed for next bit
+-keep secondary tracker for current set of states
+-return string that is constructed in combat calculation, then dont need to keep track of state
 
-Fix pokemon fainting
+<!-- Fix pokemon fainting -->
 
 Move used displayed is wrong when pokemon faints, implementing turn order should fix this
 
