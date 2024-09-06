@@ -16,6 +16,7 @@ import generatePartyButtons from "../ui/battle/generatePartyButtons";
 import generateMoveButtons from "../ui/battle/generateMoveButtons";
 import moveSelector from "../lib/moveSelector";
 import computeDamage from "../lib/damageCalculations";
+import randomTeamMember from "../lib/randomTeamMember";
 
 export default function Page({
   searchParams,
@@ -90,17 +91,6 @@ export default function Page({
     setActivePlayerRosterIdentifier(item);
   }
 
-  function randomTeamMember(roster: Map<string, RosterEntry>): string {
-    const aliveRoster: string[] = [];
-    roster.forEach((element) => {
-      if (element.currentHP != 0) {
-        aliveRoster.push(element.pokemon.name);
-      }
-    });
-    console.log(opponentRoster);
-    return aliveRoster[Math.floor(Math.random() * aliveRoster.length)];
-  }
-
   function activePlayerAction(selectedMove: Move) {
     if (
       activePlayerPokemon == undefined ||
@@ -130,7 +120,6 @@ export default function Page({
             currentHP: 0,
           })
         );
-        setActiveOpponentRosterIdentifier(randomTeamMember(opponentRoster));
       } else {
         setOpponentRoster(
           opponentRoster.set(activeOpponentPokemon.name, {
@@ -195,14 +184,38 @@ export default function Page({
       console.log("handleMoveOnClick log");
       return;
     }
-    if (activePlayerPokemon.stats.sp > activeOpponentPokemon.stats.sp) {
+    let speedTieBreak = -1;
+    if (activePlayerPokemon.stats.sp == activeOpponentPokemon.stats.sp) {
+      console.log("there is a speed tie");
+      speedTieBreak = Math.floor(Math.random() * 2);
+    }
+    if (
+      speedTieBreak == 0 ||
+      activePlayerPokemon.stats.sp > activeOpponentPokemon.stats.sp
+    ) {
+      console.log("player went first");
       activePlayerAction(selectedMove);
-      activeOpponentAction();
-    } else if (activeOpponentPokemon.stats.sp > activePlayerPokemon.stats.sp) {
-      activeOpponentAction();
-      activePlayerAction(selectedMove);
+      if (opponentRoster.get(activeOpponentPokemon.name)?.currentHP != 0) {
+        console.log(
+          "current HP",
+          opponentRoster.get(activeOpponentPokemon.name)?.currentHP
+        );
+        activeOpponentAction();
+      } else {
+        console.log("opponent fainted, nothing should have happend");
+        setActiveOpponentRosterIdentifier(randomTeamMember(opponentRoster));
+      }
     } else {
-      console.log("speedtie");
+      console.log("opponent went first");
+      activeOpponentAction();
+      if (theActivePlayerHP != 0) {
+        activePlayerAction(selectedMove);
+        if (theActiveOpponentHP == 0) {
+          setActiveOpponentRosterIdentifier(randomTeamMember(opponentRoster));
+        }
+      } else {
+        console.log("player fainted, nothing should have happened");
+      }
     }
   }
 
