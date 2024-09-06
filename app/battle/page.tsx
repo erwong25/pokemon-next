@@ -46,9 +46,6 @@ export default function Page({
     useState(POKEMONS[startingOpponentPokemon].name);
   const [damageDealt, setDamageDealt] = useState<CombatOutcome>(0);
   const [damageReceived, setDamageReceived] = useState<CombatOutcome>(0);
-  const [activeOpponentHP, setActiveOpponentHP] = useState(
-    calculateMaxHP(POKEMONS[startingOpponentPokemon])
-  );
   const [activePlayerMove, setActivePlayerMove] = useState("");
   const [activeOpponentMove, setActiveOpponentMove] = useState("");
   const [playerRoster, setPlayerRoster] = useState(
@@ -104,26 +101,22 @@ export default function Page({
     return aliveRoster[Math.floor(Math.random() * aliveRoster.length)];
   }
 
-  function handleMoveOnClick(item: Move) {
+  function activePlayerAction(selectedMove: Move) {
     if (
       activePlayerPokemon == undefined ||
       activeOpponentPokemon == undefined ||
       theActivePlayerHP == undefined ||
       theActiveOpponentHP == undefined
     ) {
-      console.log("98");
+      console.log("activePlayerAction log");
       return;
     }
-    const opponentMove =
-      activeOpponentPokemon.moves[moveSelector(activeOpponentPokemon)];
-    setActiveOpponentMove(opponentMove.name);
-    setActivePlayerMove(item.name);
+    setActivePlayerMove(selectedMove.name);
     const attackDamage = computeDamage(
-      item,
+      selectedMove,
       activePlayerPokemon,
       activeOpponentPokemon
     );
-
     if (attackDamage === "Miss") {
       setDamageDealt("Miss");
     } else if (attackDamage === "No effect") {
@@ -145,12 +138,24 @@ export default function Page({
             currentHP: theActiveOpponentHP - attackDamage,
           })
         );
-        //   setActiveOpponentHP(0);
-        //   setActiveOpponentRosterIdentifier(randomTeamMember(opponentRoster));
-        // } else {
-        //   setActiveOpponentHP(theActiveOpponentHP - attackDamage);
       }
     }
+  }
+
+  function activeOpponentAction() {
+    if (
+      activePlayerPokemon == undefined ||
+      activeOpponentPokemon == undefined ||
+      theActivePlayerHP == undefined ||
+      theActiveOpponentHP == undefined
+    ) {
+      console.log("activeOpponentAction log");
+      return;
+    }
+    const opponentMove =
+      activeOpponentPokemon.moves[moveSelector(activeOpponentPokemon)];
+    setActiveOpponentMove(opponentMove.name);
+
     const opponentDamage = computeDamage(
       opponentMove,
       activeOpponentPokemon,
@@ -178,6 +183,54 @@ export default function Page({
         );
       }
     }
+  }
+
+  function handleMoveOnClick(selectedMove: Move) {
+    if (
+      activePlayerPokemon == undefined ||
+      activeOpponentPokemon == undefined ||
+      theActivePlayerHP == undefined ||
+      theActiveOpponentHP == undefined
+    ) {
+      console.log("handleMoveOnClick log");
+      return;
+    }
+    if (activePlayerPokemon.stats.sp > activeOpponentPokemon.stats.sp) {
+      activePlayerAction(selectedMove);
+      activeOpponentAction();
+    } else if (activeOpponentPokemon.stats.sp > activePlayerPokemon.stats.sp) {
+      activeOpponentAction();
+      activePlayerAction(selectedMove);
+    } else {
+      console.log("speedtie");
+    }
+  }
+
+  function generateCombatText(): React.ReactNode {
+    if (
+      activePlayerPokemon == undefined ||
+      activeOpponentPokemon == undefined ||
+      theActivePlayerHP == undefined
+    ) {
+      return;
+    }
+    return (
+      <div className="bg-red-600 absolute text-black bottom-0 h-[4.5rem]">
+        {combatText(
+          activePlayerPokemon.name,
+          activeOpponentPokemon.name,
+          activePlayerMove,
+          damageDealt
+        )}
+        {combatText(
+          activeOpponentPokemon.name,
+          activePlayerPokemon.name,
+          activeOpponentMove,
+          damageReceived
+        )}
+        {theActivePlayerHP <= 0 && <p>{activePlayerPokemon.name} fainted</p>}
+      </div>
+    );
   }
 
   return (
@@ -220,8 +273,8 @@ export default function Page({
               />
             </div>
           )}
-          <div className="bg-red-600 absolute text-black bottom-0 h-[4.5rem]">
-            {combatText(
+          {generateCombatText()}
+          {/* {combatText(
               activePlayerPokemon.name,
               activeOpponentPokemon.name,
               activePlayerMove,
@@ -235,8 +288,7 @@ export default function Page({
             )}
             {theActivePlayerHP <= 0 && (
               <p>{activePlayerPokemon.name} fainted</p>
-            )}
-          </div>
+            )} */}
         </div>
         {hydrated && (
           <div
