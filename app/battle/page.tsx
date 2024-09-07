@@ -8,7 +8,6 @@ import type { Move } from "../lib/moves";
 import Image from "next/image";
 import calculateMaxHP from "../lib/calculateMaxHP";
 import generatePlayerRoster, { RosterEntry } from "../lib/generatePlayerRoster";
-import combatText from "../lib/combatText";
 import Link from "next/link";
 import generateDisplayArea from "../lib/generateDisplayArea";
 import type { DisplayContent } from "../lib/generateDisplayArea";
@@ -17,6 +16,7 @@ import generateMoveButtons from "../ui/battle/generateMoveButtons";
 import moveSelector from "../lib/moveSelector";
 import computeDamage from "../lib/damageCalculations";
 import randomTeamMember from "../lib/randomTeamMember";
+import generateCombatText, { combatContent } from "../lib/generateCombatText";
 
 export default function Page({
   searchParams,
@@ -56,6 +56,9 @@ export default function Page({
     generatePlayerRoster(randomRoster)
   );
   const [displayArea, setDisplayArea] = useState<DisplayContent | null>(null);
+  const [combatInfo, setCombatInfo] = useState(
+    new Map<number, combatContent>()
+  );
   const [hydrated, setHydrated] = useState(false);
   useEffect(() => {
     setHydrated(true);
@@ -91,7 +94,7 @@ export default function Page({
     setActivePlayerRosterIdentifier(item);
   }
 
-  function activePlayerAction(selectedMove: Move) {
+  function activePlayerAction(selectedMove: Move, order: number) {
     if (
       activePlayerPokemon == undefined ||
       activeOpponentPokemon == undefined ||
@@ -109,10 +112,34 @@ export default function Page({
     );
     if (attackDamage === "Miss") {
       setDamageDealt("Miss");
+      setCombatInfo(
+        combatInfo.set(order, {
+          attacker: activePlayerPokemon,
+          defender: activeOpponentPokemon,
+          move: selectedMove.name,
+          outcome: "Miss",
+        })
+      );
     } else if (attackDamage === "No effect") {
       setDamageDealt("No effect");
+      setCombatInfo(
+        combatInfo.set(order, {
+          attacker: activePlayerPokemon,
+          defender: activeOpponentPokemon,
+          move: selectedMove.name,
+          outcome: "No effect",
+        })
+      );
     } else {
       setDamageDealt(attackDamage);
+      setCombatInfo(
+        combatInfo.set(order, {
+          attacker: activePlayerPokemon,
+          defender: activeOpponentPokemon,
+          move: selectedMove.name,
+          outcome: attackDamage,
+        })
+      );
       if (theActiveOpponentHP - attackDamage <= 0) {
         setOpponentRoster(
           opponentRoster.set(activeOpponentPokemon.name, {
@@ -131,7 +158,7 @@ export default function Page({
     }
   }
 
-  function activeOpponentAction() {
+  function activeOpponentAction(order: number) {
     if (
       activePlayerPokemon == undefined ||
       activeOpponentPokemon == undefined ||
@@ -152,10 +179,34 @@ export default function Page({
     );
     if (opponentDamage === "Miss") {
       setDamageReceived("Miss");
+      setCombatInfo(
+        combatInfo.set(order, {
+          attacker: activeOpponentPokemon,
+          defender: activePlayerPokemon,
+          move: opponentMove.name,
+          outcome: "Miss",
+        })
+      );
     } else if (opponentDamage === "No effect") {
       setDamageReceived("No effect");
+      setCombatInfo(
+        combatInfo.set(order, {
+          attacker: activeOpponentPokemon,
+          defender: activePlayerPokemon,
+          move: opponentMove.name,
+          outcome: "No effect",
+        })
+      );
     } else {
       setDamageReceived(opponentDamage);
+      setCombatInfo(
+        combatInfo.set(order, {
+          attacker: activeOpponentPokemon,
+          defender: activePlayerPokemon,
+          move: opponentMove.name,
+          outcome: opponentDamage,
+        })
+      );
       if (theActivePlayerHP - opponentDamage <= 0) {
         setPlayerRoster(
           playerRoster.set(activePlayerPokemon.name, {
@@ -194,22 +245,22 @@ export default function Page({
       activePlayerPokemon.stats.sp > activeOpponentPokemon.stats.sp
     ) {
       console.log("player went first");
-      activePlayerAction(selectedMove);
+      activePlayerAction(selectedMove, 1);
       if (opponentRoster.get(activeOpponentPokemon.name)?.currentHP != 0) {
         console.log(
           "current HP",
           opponentRoster.get(activeOpponentPokemon.name)?.currentHP
         );
-        activeOpponentAction();
+        activeOpponentAction(2);
       } else {
         console.log("opponent fainted, nothing should have happend");
         setActiveOpponentRosterIdentifier(randomTeamMember(opponentRoster));
       }
     } else {
       console.log("opponent went first");
-      activeOpponentAction();
+      activeOpponentAction(1);
       if (theActivePlayerHP != 0) {
-        activePlayerAction(selectedMove);
+        activePlayerAction(selectedMove, 2);
         if (theActiveOpponentHP == 0) {
           setActiveOpponentRosterIdentifier(randomTeamMember(opponentRoster));
         }
@@ -217,33 +268,6 @@ export default function Page({
         console.log("player fainted, nothing should have happened");
       }
     }
-  }
-
-  function generateCombatText(): React.ReactNode {
-    if (
-      activePlayerPokemon == undefined ||
-      activeOpponentPokemon == undefined ||
-      theActivePlayerHP == undefined
-    ) {
-      return;
-    }
-    return (
-      <div className="bg-red-600 absolute text-black bottom-0 h-[4.5rem]">
-        {combatText(
-          activePlayerPokemon.name,
-          activeOpponentPokemon.name,
-          activePlayerMove,
-          damageDealt
-        )}
-        {combatText(
-          activeOpponentPokemon.name,
-          activePlayerPokemon.name,
-          activeOpponentMove,
-          damageReceived
-        )}
-        {theActivePlayerHP <= 0 && <p>{activePlayerPokemon.name} fainted</p>}
-      </div>
-    );
   }
 
   return (
@@ -286,22 +310,16 @@ export default function Page({
               />
             </div>
           )}
-          {generateCombatText()}
-          {/* {combatText(
-              activePlayerPokemon.name,
-              activeOpponentPokemon.name,
-              activePlayerMove,
-              damageDealt
-            )}
-            {combatText(
-              activeOpponentPokemon.name,
-              activePlayerPokemon.name,
-              activeOpponentMove,
-              damageReceived
-            )}
-            {theActivePlayerHP <= 0 && (
-              <p>{activePlayerPokemon.name} fainted</p>
-            )} */}
+          {generateCombatText(
+            combatInfo
+            // activePlayerPokemon,
+            // activeOpponentPokemon,
+            // theActivePlayerHP,
+            // activePlayerMove,
+            // activeOpponentMove,
+            // damageDealt,
+            // damageReceived
+          )}
         </div>
         {hydrated && (
           <div

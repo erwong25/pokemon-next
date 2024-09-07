@@ -1,32 +1,33 @@
 import React from "react";
 import type { CombatOutcome } from "./damageCalculations";
+import { combatContent } from "./generateCombatText";
 
 export default function combatText(
-  activePokemon: string,
-  opposingPokemon: string,
-  pokemonMove: string,
-  resultDamage: CombatOutcome
+  combatContent: combatContent
+  // activePokemon: string,
+  // opposingPokemon: string,
+  // pokemonMove: string,
+  // resultDamage: CombatOutcome
 ): React.ReactNode {
-  if (pokemonMove !== "") {
-    if (resultDamage === "Miss") {
-      return (
-        <p>
-          {activePokemon} used {pokemonMove}...but it missed.
-        </p>
-      );
-    } else if (resultDamage === "No effect") {
-      return (
-        <p>
-          {activePokemon} used {pokemonMove}! It had no effect.
-        </p>
-      );
-    } else {
-      return (
-        <p>
-          {activePokemon} used {pokemonMove}! {opposingPokemon} took{" "}
-          {resultDamage} damage.
-        </p>
-      );
-    }
+  if (combatContent.outcome === "Miss") {
+    return (
+      <p>
+        {combatContent.attacker.name} used {combatContent.move}...but it missed.
+      </p>
+    );
+  } else if (combatContent.outcome === "No effect") {
+    return (
+      <p>
+        {combatContent.attacker.name} used {combatContent.move}! It had no
+        effect.
+      </p>
+    );
+  } else {
+    return (
+      <p>
+        {combatContent.attacker.name} used {combatContent.move}!{" "}
+        {combatContent.defender.name} took {combatContent.outcome} damage.
+      </p>
+    );
   }
 }
