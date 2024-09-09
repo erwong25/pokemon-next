@@ -22,6 +22,13 @@ export default function combatText(
         effect.
       </p>
     );
+  } else if (combatContent.outcome === "Fainted") {
+    return (
+      <p>
+        {combatContent.attacker.name} fainted. Opponent switched to{" "}
+        {combatContent.opponentFaintSwitch}.
+      </p>
+    );
   } else {
     return (
       <p>

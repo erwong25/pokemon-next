@@ -5,7 +5,8 @@ import { Pokemon } from "./pokemon";
 export type combatContent = {
   attacker: Pokemon;
   defender: Pokemon;
-  move: string;
+  move?: string;
+  opponentFaintSwitch?: string;
   outcome: CombatOutcome;
 };
 
@@ -19,20 +20,22 @@ export default function generateCombatText(
   //   ) {
   //     return;
   //   }
-  if (combatInfo.get(1) == undefined) {
+  const combatInfo1 = combatInfo.get(1);
+  const combatInfo2 = combatInfo.get(2);
+  if (combatInfo1 == undefined || combatInfo2 == undefined) {
     return;
   }
   return (
     <div className="bg-red-600 absolute text-black bottom-0 h-[4.5rem]">
       {combatText(
-        combatInfo.get(1)
+        combatInfo1
         // activePlayerPokemon.name,
         // activeOpponentPokemon.name,
         // activePlayerMove,
         // damageDealt
       )}
       {combatText(
-        combatInfo.get(2)
+        combatInfo2
         // activeOpponentPokemon.name,
         // activePlayerPokemon.name,
         // activeOpponentMove,

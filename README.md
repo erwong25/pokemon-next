@@ -31,3 +31,7 @@ Party buttons hover over change appearance to indicate it is hovered on
 
 Red or Gray pokeballs to indicate how many pokemon and in which slots are remaining
 -maps are not ordered right? i should change the key to a number to then track the order of the pokemon (but then i might have to rewrite a bunch of lines that reference the key of the playerRoster T^T)
+
+If opponentDamage = miss or fainted or no effect -> opponentDamge != number
+
+Need to fix vercel

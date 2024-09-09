@@ -110,27 +110,7 @@ export default function Page({
       activePlayerPokemon,
       activeOpponentPokemon
     );
-    if (attackDamage === "Miss") {
-      setDamageDealt("Miss");
-      setCombatInfo(
-        combatInfo.set(order, {
-          attacker: activePlayerPokemon,
-          defender: activeOpponentPokemon,
-          move: selectedMove.name,
-          outcome: "Miss",
-        })
-      );
-    } else if (attackDamage === "No effect") {
-      setDamageDealt("No effect");
-      setCombatInfo(
-        combatInfo.set(order, {
-          attacker: activePlayerPokemon,
-          defender: activeOpponentPokemon,
-          move: selectedMove.name,
-          outcome: "No effect",
-        })
-      );
-    } else {
+    if (typeof attackDamage == "number") {
       setDamageDealt(attackDamage);
       setCombatInfo(
         combatInfo.set(order, {
@@ -155,6 +135,16 @@ export default function Page({
           })
         );
       }
+    } else {
+      setDamageDealt(attackDamage);
+      setCombatInfo(
+        combatInfo.set(order, {
+          attacker: activePlayerPokemon,
+          defender: activeOpponentPokemon,
+          move: selectedMove.name,
+          outcome: attackDamage,
+        })
+      );
     }
   }
 
@@ -177,27 +167,7 @@ export default function Page({
       activeOpponentPokemon,
       activePlayerPokemon
     );
-    if (opponentDamage === "Miss") {
-      setDamageReceived("Miss");
-      setCombatInfo(
-        combatInfo.set(order, {
-          attacker: activeOpponentPokemon,
-          defender: activePlayerPokemon,
-          move: opponentMove.name,
-          outcome: "Miss",
-        })
-      );
-    } else if (opponentDamage === "No effect") {
-      setDamageReceived("No effect");
-      setCombatInfo(
-        combatInfo.set(order, {
-          attacker: activeOpponentPokemon,
-          defender: activePlayerPokemon,
-          move: opponentMove.name,
-          outcome: "No effect",
-        })
-      );
-    } else {
+    if (typeof opponentDamage == "number") {
       setDamageReceived(opponentDamage);
       setCombatInfo(
         combatInfo.set(order, {
@@ -222,6 +192,16 @@ export default function Page({
           })
         );
       }
+    } else {
+      setDamageReceived(opponentDamage);
+      setCombatInfo(
+        combatInfo.set(order, {
+          attacker: activeOpponentPokemon,
+          defender: activePlayerPokemon,
+          move: opponentMove.name,
+          outcome: opponentDamage,
+        })
+      );
     }
   }
 
@@ -254,7 +234,17 @@ export default function Page({
         activeOpponentAction(2);
       } else {
         console.log("opponent fainted, nothing should have happend");
-        setActiveOpponentRosterIdentifier(randomTeamMember(opponentRoster));
+        const opponentFaintSwitch = randomTeamMember(opponentRoster);
+        setCombatInfo(
+          combatInfo.set(2, {
+            attacker: activeOpponentPokemon,
+            defender: activePlayerPokemon,
+            opponentFaintSwitch: opponentFaintSwitch,
+            outcome: "Fainted",
+            //how to include which pokemon fainted, should i add string to option for move so i can add opponentFaintSwitch to combatInfo
+          })
+        );
+        setActiveOpponentRosterIdentifier(opponentFaintSwitch);
       }
     } else {
       console.log("opponent went first");
