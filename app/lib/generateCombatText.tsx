@@ -6,6 +6,7 @@ export type combatContent = {
   attacker: Pokemon;
   defender: Pokemon;
   move?: string;
+  fainting?: string;
   opponentFaintSwitch?: string;
   outcome: CombatOutcome;
 };
@@ -26,7 +27,7 @@ export default function generateCombatText(
     return;
   }
   return (
-    <div className="bg-red-600 absolute text-black bottom-0 h-[4.5rem]">
+    <div className="bg-red-600 absolute text-black bottom-0 h-[4.5rem] w-[500px]">
       {combatText(
         combatInfo1
         // activePlayerPokemon.name,

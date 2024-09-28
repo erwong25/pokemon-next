@@ -110,16 +110,8 @@ export default function Page({
       activePlayerPokemon,
       activeOpponentPokemon
     );
+    setDamageDealt(attackDamage);
     if (typeof attackDamage == "number") {
-      setDamageDealt(attackDamage);
-      setCombatInfo(
-        combatInfo.set(order, {
-          attacker: activePlayerPokemon,
-          defender: activeOpponentPokemon,
-          move: selectedMove.name,
-          outcome: attackDamage,
-        })
-      );
       if (theActiveOpponentHP - attackDamage <= 0) {
         setOpponentRoster(
           opponentRoster.set(activeOpponentPokemon.name, {
@@ -127,16 +119,37 @@ export default function Page({
             currentHP: 0,
           })
         );
-      } else {
-        setOpponentRoster(
-          opponentRoster.set(activeOpponentPokemon.name, {
-            pokemon: activeOpponentPokemon,
-            currentHP: theActiveOpponentHP - attackDamage,
+        const opponentFaintSwitch = randomTeamMember(opponentRoster);
+        setCombatInfo(
+          combatInfo.set(order, {
+            attacker: activePlayerPokemon,
+            defender: activeOpponentPokemon,
+            move: selectedMove.name,
+            fainting: "opponent",
+            opponentFaintSwitch: opponentFaintSwitch,
+            outcome: attackDamage,
           })
         );
+        setActiveOpponentRosterIdentifier(opponentFaintSwitch);
+      } else {
+        setCombatInfo(
+          combatInfo.set(order, {
+            attacker: activePlayerPokemon,
+            defender: activeOpponentPokemon,
+            move: selectedMove.name,
+            outcome: attackDamage,
+          })
+        );
+        {
+          setOpponentRoster(
+            opponentRoster.set(activeOpponentPokemon.name, {
+              pokemon: activeOpponentPokemon,
+              currentHP: theActiveOpponentHP - attackDamage,
+            })
+          );
+        }
       }
     } else {
-      setDamageDealt(attackDamage);
       setCombatInfo(
         combatInfo.set(order, {
           attacker: activePlayerPokemon,
@@ -161,22 +174,13 @@ export default function Page({
     const opponentMove =
       activeOpponentPokemon.moves[moveSelector(activeOpponentPokemon)];
     setActiveOpponentMove(opponentMove.name);
-
     const opponentDamage = computeDamage(
       opponentMove,
       activeOpponentPokemon,
       activePlayerPokemon
     );
+    setDamageReceived(opponentDamage);
     if (typeof opponentDamage == "number") {
-      setDamageReceived(opponentDamage);
-      setCombatInfo(
-        combatInfo.set(order, {
-          attacker: activeOpponentPokemon,
-          defender: activePlayerPokemon,
-          move: opponentMove.name,
-          outcome: opponentDamage,
-        })
-      );
       if (theActivePlayerHP - opponentDamage <= 0) {
         setPlayerRoster(
           playerRoster.set(activePlayerPokemon.name, {
@@ -184,7 +188,24 @@ export default function Page({
             currentHP: 0,
           })
         );
+        setCombatInfo(
+          combatInfo.set(order, {
+            attacker: activeOpponentPokemon,
+            defender: activePlayerPokemon,
+            move: opponentMove.name,
+            fainting: "player",
+            outcome: opponentDamage,
+          })
+        );
       } else {
+        setCombatInfo(
+          combatInfo.set(order, {
+            attacker: activeOpponentPokemon,
+            defender: activePlayerPokemon,
+            move: opponentMove.name,
+            outcome: opponentDamage,
+          })
+        );
         setPlayerRoster(
           playerRoster.set(activePlayerPokemon.name, {
             pokemon: activePlayerPokemon,
@@ -193,7 +214,6 @@ export default function Page({
         );
       }
     } else {
-      setDamageReceived(opponentDamage);
       setCombatInfo(
         combatInfo.set(order, {
           attacker: activeOpponentPokemon,
@@ -234,28 +254,21 @@ export default function Page({
         activeOpponentAction(2);
       } else {
         console.log("opponent fainted, nothing should have happend");
-        const opponentFaintSwitch = randomTeamMember(opponentRoster);
-        setCombatInfo(
-          combatInfo.set(2, {
-            attacker: activeOpponentPokemon,
-            defender: activePlayerPokemon,
-            opponentFaintSwitch: opponentFaintSwitch,
-            outcome: "Fainted",
-            //how to include which pokemon fainted, should i add string to option for move so i can add opponentFaintSwitch to combatInfo
-          })
-        );
-        setActiveOpponentRosterIdentifier(opponentFaintSwitch);
       }
     } else {
       console.log("opponent went first");
       activeOpponentAction(1);
-      if (theActivePlayerHP != 0) {
+      if (playerRoster.get(activePlayerPokemon.name)?.currentHP != 0) {
         activePlayerAction(selectedMove, 2);
-        if (theActiveOpponentHP == 0) {
-          setActiveOpponentRosterIdentifier(randomTeamMember(opponentRoster));
-        }
       } else {
         console.log("player fainted, nothing should have happened");
+        // setCombatInfo(
+        //   combatInfo.set(2, {
+        //     attacker: activePlayerPokemon,
+        //     defender: activeOpponentPokemon,
+        //     outcome: "Player fainted",
+        //   })
+        // );
       }
     }
   }
@@ -280,7 +293,7 @@ export default function Page({
             {theActivePlayerHP}/{calculateMaxHP(activePlayerPokemon)}
           </span>
         </div>
-        <div className="bg-white relative flex justify-center my-auto w-[500px] h-[400px]">
+        <div className="bg-white relative flex justify-center my-auto w-[550px] h-[400px]">
           <div className="bg-red-600 scale-x-[-2] scale-y-[2] m-auto">
             <Image
               priority={true}
@@ -300,16 +313,7 @@ export default function Page({
               />
             </div>
           )}
-          {generateCombatText(
-            combatInfo
-            // activePlayerPokemon,
-            // activeOpponentPokemon,
-            // theActivePlayerHP,
-            // activePlayerMove,
-            // activeOpponentMove,
-            // damageDealt,
-            // damageReceived
-          )}
+          {generateCombatText(combatInfo)}
         </div>
         {hydrated && (
           <div

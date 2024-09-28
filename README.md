@@ -34,4 +34,4 @@ Red or Gray pokeballs to indicate how many pokemon and in which slots are remain
 
 If opponentDamage = miss or fainted or no effect -> opponentDamge != number
 
-Need to fix vercel
+Disable move selection on player faint
