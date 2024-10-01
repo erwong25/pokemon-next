@@ -55,6 +55,7 @@ export default function Page({
   const [opponentRoster, setOpponentRoster] = useState(
     generatePlayerRoster(randomRoster)
   );
+  console.log(opponentRoster);
   const [displayArea, setDisplayArea] = useState<DisplayContent | null>(null);
   const [combatInfo, setCombatInfo] = useState(
     new Map<number, combatContent>()
@@ -91,6 +92,13 @@ export default function Page({
   }
 
   function handlePartyOnClick(item: string) {
+    //if activepokemon HP is 0, then dont initiate turn order, otherwise switch happens first, then opponent move
+    //it might not work because setActivePlayerRosterIdentifier might not be saved before it tries to compute damage when switching in combat
+    //suggestion: override in opponentAction to override roster entry
+    if (playerRoster.get(activePlayerRosterIdentifier)?.currentHP == 0) {
+      setActivePlayerRosterIdentifier(item),
+    // setCombatInfo()}
+  
     setActivePlayerRosterIdentifier(item);
   }
 
@@ -115,6 +123,16 @@ export default function Page({
       if (theActiveOpponentHP - attackDamage <= 0) {
         const opponentFaintSwitch = randomTeamMember(opponentRoster);
         console.log("setting Combat Info after opponent faints");
+        setCombatInfo((combatInfo) =>
+          combatInfo.set(order, {
+            attacker: activePlayerPokemon,
+            defender: activeOpponentPokemon,
+            move: selectedMove.name,
+            fainting: "opponent",
+            opponentFaintSwitch: opponentFaintSwitch,
+            outcome: attackDamage,
+          })
+        );
         setOpponentRoster(
           opponentRoster.set(activeOpponentPokemon.name, {
             pokemon: activeOpponentPokemon,
@@ -123,7 +141,7 @@ export default function Page({
         );
         setActiveOpponentRosterIdentifier(opponentFaintSwitch);
       } else {
-        setCombatInfo(
+        setCombatInfo((combatInfo) =>
           combatInfo.set(order, {
             attacker: activePlayerPokemon,
             defender: activeOpponentPokemon,
@@ -141,7 +159,7 @@ export default function Page({
         }
       }
     } else {
-      setCombatInfo(
+      setCombatInfo((combatInfo) =>
         combatInfo.set(order, {
           attacker: activePlayerPokemon,
           defender: activeOpponentPokemon,
@@ -179,7 +197,7 @@ export default function Page({
             currentHP: 0,
           })
         );
-        setCombatInfo(
+        setCombatInfo((combatInfo) =>
           combatInfo.set(order, {
             attacker: activeOpponentPokemon,
             defender: activePlayerPokemon,
@@ -189,7 +207,7 @@ export default function Page({
           })
         );
       } else {
-        setCombatInfo(
+        setCombatInfo((combatInfo) =>
           combatInfo.set(order, {
             attacker: activeOpponentPokemon,
             defender: activePlayerPokemon,
@@ -205,7 +223,7 @@ export default function Page({
         );
       }
     } else {
-      setCombatInfo(
+      setCombatInfo((combatInfo) =>
         combatInfo.set(order, {
           attacker: activeOpponentPokemon,
           defender: activePlayerPokemon,
@@ -226,6 +244,7 @@ export default function Page({
       console.log("handleMoveOnClick log");
       return;
     }
+    setCombatInfo(new Map());
     let speedTieBreak = -1;
     if (activePlayerPokemon.stats.sp == activeOpponentPokemon.stats.sp) {
       console.log("there is a speed tie");
@@ -253,7 +272,7 @@ export default function Page({
         activePlayerAction(selectedMove, 2);
       } else {
         console.log("player fainted, nothing should have happened");
-        // setCombatInfo(
+        // setCombatInfo(combatInfo =>
         //   combatInfo.set(2, {
         //     attacker: activePlayerPokemon,
         //     defender: activeOpponentPokemon,
@@ -347,7 +366,7 @@ export default function Page({
         <div className="bg-pink-600 w-[650px] mr-1">
           <div className="absolute">Select Move:</div>
           {generateMoveButtons(
-            activePlayerPokemon,
+            playerRoster.get(activePlayerRosterIdentifier),
             (item: Move) => setDisplayArea({ move: item }),
             (item) => handleMoveOnClick(item)
           )}

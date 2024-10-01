@@ -25,8 +25,6 @@ Add turn order based on speed
 
 <!-- Fix pokemon fainting -->
 
-Move used displayed is wrong when pokemon faints, implementing turn order should fix this
-
 Party buttons hover over change appearance to indicate it is hovered on
 
 Red or Gray pokeballs to indicate how many pokemon and in which slots are remaining
@@ -34,6 +32,6 @@ Red or Gray pokeballs to indicate how many pokemon and in which slots are remain
 
 If opponentDamage = miss or fainted or no effect -> opponentDamge != number
 
-Disable move selection on player faint
+<!-- Disable move selection on player faint -->
 
-CombatText not generating if pokemon faints in the first move of the first turn before other player moves, opponent also doesnt switch when they faint(but only some of the time? even more confused now), only HP updates (is this related to when it rerenders?)
+Add text on switch
