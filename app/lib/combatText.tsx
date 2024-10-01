@@ -8,7 +8,7 @@ export default function combatText(
   let faintText = null;
   if (combatContent.fainting == "player") {
     faintText = (
-      <p>{combatContent.defender.name} fainted. Send out your next pokemon.</p>
+      <p>{combatContent.defender.name} fainted. Send out your next pokemon.</p> // <p> cant be descendant of <p>
     );
   }
   if (combatContent.fainting == "opponent") {

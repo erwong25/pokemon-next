@@ -113,21 +113,12 @@ export default function Page({
     setDamageDealt(attackDamage);
     if (typeof attackDamage == "number") {
       if (theActiveOpponentHP - attackDamage <= 0) {
+        const opponentFaintSwitch = randomTeamMember(opponentRoster);
+        console.log("setting Combat Info after opponent faints");
         setOpponentRoster(
           opponentRoster.set(activeOpponentPokemon.name, {
             pokemon: activeOpponentPokemon,
             currentHP: 0,
-          })
-        );
-        const opponentFaintSwitch = randomTeamMember(opponentRoster);
-        setCombatInfo(
-          combatInfo.set(order, {
-            attacker: activePlayerPokemon,
-            defender: activeOpponentPokemon,
-            move: selectedMove.name,
-            fainting: "opponent",
-            opponentFaintSwitch: opponentFaintSwitch,
-            outcome: attackDamage,
           })
         );
         setActiveOpponentRosterIdentifier(opponentFaintSwitch);
