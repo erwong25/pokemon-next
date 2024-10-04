@@ -97,9 +97,9 @@ export default function Page({
     //suggestion: override in opponentAction to override roster entry
     if (playerRoster.get(activePlayerRosterIdentifier)?.currentHP == 0) {
       setActivePlayerRosterIdentifier(item),
-    // setCombatInfo()}
-  
-    setActivePlayerRosterIdentifier(item);
+        // setCombatInfo()}
+        setActivePlayerRosterIdentifier(item);
+    }
   }
 
   function activePlayerAction(selectedMove: Move, order: number) {

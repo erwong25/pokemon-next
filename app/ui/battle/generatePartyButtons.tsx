@@ -35,7 +35,7 @@ export default function generatePartyButtons(
             onClick={() => onClick(item)}
             //   onMouseOver={() => setDisplayArea({ rosterEntry: partyPokemon })}
             // onMouseOut={() => setDisplayArea(null)}
-            className="bg-blue-600 flex items-center h-28 rounded-md rounded-tl-3xl w-[300px]"
+            className="bg-blue-600 hover:bg-green-700 hover:shadow-xl transform hover:-translate-x-1 hover:-translate-y-1 hover:scale-[1.01] flex items-center h-28 rounded-md rounded-tl-3xl w-[300px]"
           >
             <div className="bg-white flex justify-center m-auto w-[100px]">
               <Image src={partyPokemon.pokemon.staticSprite} alt="" />
