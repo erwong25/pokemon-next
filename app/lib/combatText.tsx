@@ -8,7 +8,7 @@ export default function combatText(
   let faintText = null;
   if (combatContent.fainting == "player") {
     faintText = (
-      <p>{combatContent.defender.name} fainted. Send out your next pokemon.</p> // <p> cant be descendant of <p>
+      <p>{combatContent.defender.name} fainted. Send out your next pokemon. </p>
     );
   }
   if (combatContent.fainting == "opponent") {
@@ -18,6 +18,12 @@ export default function combatText(
         {combatContent.opponentFaintSwitch}.
       </p>
     );
+  }
+  if (combatContent.outcome === "Switching") {
+    <p>Switching to {combatContent.attacker.name}</p>;
+  }
+  if (combatContent.outcome === "Fainted") {
+    return <p>You sent out {combatContent.attacker.name}!</p>;
   }
   if (combatContent.outcome === "Miss") {
     return (
@@ -34,11 +40,13 @@ export default function combatText(
     );
   } else {
     return (
-      <p>
-        {combatContent.attacker.name} used {combatContent.move}!{" "}
-        {combatContent.defender.name} took {combatContent.outcome} damage.
+      <div>
+        <p>
+          {combatContent.attacker.name} used {combatContent.move}!{" "}
+          {combatContent.defender.name} took {combatContent.outcome} damage.
+        </p>
         {faintText}
-      </p>
+      </div>
     );
   }
 }

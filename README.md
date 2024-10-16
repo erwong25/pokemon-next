@@ -34,4 +34,6 @@ If opponentDamage = miss or fainted or no effect -> opponentDamge != number
 
 <!-- Disable move selection on player faint -->
 
-Add text on switch
+<!-- Add text on switch -->
+
+Add win/lose condition

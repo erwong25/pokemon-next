@@ -4,7 +4,7 @@ import { Pokemon } from "./pokemon";
 
 export type combatContent = {
   attacker: Pokemon;
-  defender: Pokemon;
+  defender?: Pokemon;
   move?: string;
   fainting?: string;
   opponentFaintSwitch?: string;
@@ -16,7 +16,7 @@ export default function generateCombatText(
 ): React.ReactNode {
   const combatInfo1 = combatInfo.get(1);
   const combatInfo2 = combatInfo.get(2);
-  console.log(combatInfo);
+  // console.log(combatInfo);
   return (
     <div className="bg-red-600 absolute text-black bottom-0 h-[4.5rem] w-[500px]">
       {combatInfo1 != undefined && combatText(combatInfo1)}

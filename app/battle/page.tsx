@@ -55,7 +55,7 @@ export default function Page({
   const [opponentRoster, setOpponentRoster] = useState(
     generatePlayerRoster(randomRoster)
   );
-  console.log(opponentRoster);
+  // console.log(opponentRoster);
   const [displayArea, setDisplayArea] = useState<DisplayContent | null>(null);
   const [combatInfo, setCombatInfo] = useState(
     new Map<number, combatContent>()
@@ -92,13 +92,23 @@ export default function Page({
   }
 
   function handlePartyOnClick(item: string) {
-    //if activepokemon HP is 0, then dont initiate turn order, otherwise switch happens first, then opponent move
-    //it might not work because setActivePlayerRosterIdentifier might not be saved before it tries to compute damage when switching in combat
-    //suggestion: override in opponentAction to override roster entry
     if (playerRoster.get(activePlayerRosterIdentifier)?.currentHP == 0) {
-      setActivePlayerRosterIdentifier(item),
-        // setCombatInfo()}
-        setActivePlayerRosterIdentifier(item);
+      setActivePlayerRosterIdentifier(item);
+      setCombatInfo(new Map());
+      // setCombatInfo((combatInfo) =>
+      //   combatInfo.set(1, {
+      //     attacker: activePlayerPokemon,
+      //     defender: activeOpponentPokemon,
+      //     move: selectedMove.name,
+      //     outcome: "Fainted",
+      //   })
+      // );
+    } else {
+      setActivePlayerRosterIdentifier(item);
+      const targetAfterSwitch = playerRoster.get(item)?.pokemon;
+      if (targetAfterSwitch != undefined) {
+        activeOpponentAction(2, targetAfterSwitch);
+      }
     }
   }
 
@@ -121,6 +131,12 @@ export default function Page({
     setDamageDealt(attackDamage);
     if (typeof attackDamage == "number") {
       if (theActiveOpponentHP - attackDamage <= 0) {
+        setOpponentRoster(
+          opponentRoster.set(activeOpponentPokemon.name, {
+            pokemon: activeOpponentPokemon,
+            currentHP: 0,
+          })
+        );
         const opponentFaintSwitch = randomTeamMember(opponentRoster);
         console.log("setting Combat Info after opponent faints");
         setCombatInfo((combatInfo) =>
@@ -170,7 +186,7 @@ export default function Page({
     }
   }
 
-  function activeOpponentAction(order: number) {
+  function activeOpponentAction(order: number, opponentTarget: Pokemon) {
     if (
       activePlayerPokemon == undefined ||
       activeOpponentPokemon == undefined ||
@@ -180,27 +196,31 @@ export default function Page({
       console.log("activeOpponentAction log");
       return;
     }
+    const opponentTargetHP = playerRoster.get(opponentTarget.name)?.currentHP;
+    if (opponentTargetHP == undefined) {
+      return;
+    }
     const opponentMove =
       activeOpponentPokemon.moves[moveSelector(activeOpponentPokemon)];
     setActiveOpponentMove(opponentMove.name);
     const opponentDamage = computeDamage(
       opponentMove,
       activeOpponentPokemon,
-      activePlayerPokemon
+      opponentTarget
     );
     setDamageReceived(opponentDamage);
     if (typeof opponentDamage == "number") {
-      if (theActivePlayerHP - opponentDamage <= 0) {
+      if (opponentTargetHP - opponentDamage <= 0) {
         setPlayerRoster(
-          playerRoster.set(activePlayerPokemon.name, {
-            pokemon: activePlayerPokemon,
+          playerRoster.set(opponentTarget.name, {
+            pokemon: opponentTarget,
             currentHP: 0,
           })
         );
         setCombatInfo((combatInfo) =>
           combatInfo.set(order, {
             attacker: activeOpponentPokemon,
-            defender: activePlayerPokemon,
+            defender: opponentTarget,
             move: opponentMove.name,
             fainting: "player",
             outcome: opponentDamage,
@@ -210,15 +230,15 @@ export default function Page({
         setCombatInfo((combatInfo) =>
           combatInfo.set(order, {
             attacker: activeOpponentPokemon,
-            defender: activePlayerPokemon,
+            defender: opponentTarget,
             move: opponentMove.name,
             outcome: opponentDamage,
           })
         );
         setPlayerRoster(
-          playerRoster.set(activePlayerPokemon.name, {
-            pokemon: activePlayerPokemon,
-            currentHP: theActivePlayerHP - opponentDamage,
+          playerRoster.set(opponentTarget.name, {
+            pokemon: opponentTarget,
+            currentHP: opponentTargetHP - opponentDamage,
           })
         );
       }
@@ -226,7 +246,7 @@ export default function Page({
       setCombatInfo((combatInfo) =>
         combatInfo.set(order, {
           attacker: activeOpponentPokemon,
-          defender: activePlayerPokemon,
+          defender: opponentTarget,
           move: opponentMove.name,
           outcome: opponentDamage,
         })
@@ -261,13 +281,13 @@ export default function Page({
           "current HP",
           opponentRoster.get(activeOpponentPokemon.name)?.currentHP
         );
-        activeOpponentAction(2);
+        activeOpponentAction(2, activePlayerPokemon);
       } else {
         console.log("opponent fainted, nothing should have happend");
       }
     } else {
       console.log("opponent went first");
-      activeOpponentAction(1);
+      activeOpponentAction(1, activePlayerPokemon);
       if (playerRoster.get(activePlayerPokemon.name)?.currentHP != 0) {
         activePlayerAction(selectedMove, 2);
       } else {

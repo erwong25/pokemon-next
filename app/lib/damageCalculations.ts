@@ -4,7 +4,12 @@ import type { Pokemon } from "./pokemon";
 import { TypeEffectiveness } from "./typeEffectiveness";
 import typeEffectivenessCalc from "./typeEffectiveness";
 
-export type CombatOutcome = "Miss" | "No effect" | "Fainted" | number;
+export type CombatOutcome =
+  | "Miss"
+  | "No effect"
+  | "Fainted"
+  | "Switching"
+  | number;
 
 function computeTypeEffectiveness(
   moveType: Type,
