@@ -36,4 +36,6 @@ If opponentDamage = miss or fainted or no effect -> opponentDamge != number
 
 <!-- Add text on switch -->
 
-Add win/lose condition
+<!-- Add win/lose condition -->
+
+Add Timing

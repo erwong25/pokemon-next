@@ -31,6 +31,7 @@ export default function generatePartyButtons(
         return (
           <button
             key={`${item}`}
+            disabled={partyPokemonHP == 0}
             onMouseOver={() => onMouseOver(partyPokemon)}
             onClick={() => onClick(item)}
             //   onMouseOver={() => setDisplayArea({ rosterEntry: partyPokemon })}

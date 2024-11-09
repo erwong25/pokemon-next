@@ -4,7 +4,7 @@ import { Pokemon } from "./pokemon";
 
 export type combatContent = {
   attacker: Pokemon;
-  defender?: Pokemon;
+  defender: Pokemon;
   move?: string;
   fainting?: string;
   opponentFaintSwitch?: string;

@@ -2,7 +2,7 @@
 
 import React from "react";
 import { useState, useEffect } from "react";
-import { POKEMON_LIST, POKEMONS, Pokemon } from "../lib/pokemon";
+import { POKEMON_LIST, POKEMONS, Pokemon, BULBASAUR } from "../lib/pokemon";
 import type { CombatOutcome } from "../lib/damageCalculations";
 import type { Move } from "../lib/moves";
 import Image from "next/image";
@@ -17,6 +17,7 @@ import moveSelector from "../lib/moveSelector";
 import computeDamage from "../lib/damageCalculations";
 import randomTeamMember from "../lib/randomTeamMember";
 import generateCombatText, { combatContent } from "../lib/generateCombatText";
+import generateVictoryText from "../lib/generateVictoryText";
 
 export default function Page({
   searchParams,
@@ -60,6 +61,12 @@ export default function Page({
   const [combatInfo, setCombatInfo] = useState(
     new Map<number, combatContent>()
   );
+  const [remainingPlayerPokemon, setRemainingPlayerPokemon] = useState(
+    playerRoster.size
+  );
+  const [remainingOpponentPokemon, setRemainingOpponentPokemon] = useState(
+    opponentRoster.size
+  );
   const [hydrated, setHydrated] = useState(false);
   useEffect(() => {
     setHydrated(true);
@@ -69,6 +76,8 @@ export default function Page({
     console.log("startingPlayerPokemon is null");
     return;
   }
+
+  // console.log(remainingPlayerPokemon);
 
   const activePlayerPokemon = playerRoster.get(
     activePlayerRosterIdentifier
@@ -92,23 +101,31 @@ export default function Page({
   }
 
   function handlePartyOnClick(item: string) {
+    const switchTarget = playerRoster.get(item)?.pokemon;
+    if (switchTarget == undefined) {
+      return;
+    }
     if (playerRoster.get(activePlayerRosterIdentifier)?.currentHP == 0) {
       setActivePlayerRosterIdentifier(item);
       setCombatInfo(new Map());
-      // setCombatInfo((combatInfo) =>
-      //   combatInfo.set(1, {
-      //     attacker: activePlayerPokemon,
-      //     defender: activeOpponentPokemon,
-      //     move: selectedMove.name,
-      //     outcome: "Fainted",
-      //   })
-      // );
+      setCombatInfo((combatInfo) =>
+        combatInfo.set(1, {
+          attacker: switchTarget,
+          defender: BULBASAUR,
+          outcome: "Fainted",
+        })
+      );
     } else {
       setActivePlayerRosterIdentifier(item);
-      const targetAfterSwitch = playerRoster.get(item)?.pokemon;
-      if (targetAfterSwitch != undefined) {
-        activeOpponentAction(2, targetAfterSwitch);
-      }
+      setCombatInfo(new Map());
+      setCombatInfo((combatInfo) =>
+        combatInfo.set(1, {
+          attacker: switchTarget,
+          defender: BULBASAUR,
+          outcome: "Switching",
+        })
+      );
+      activeOpponentAction(2, switchTarget);
     }
   }
 
@@ -149,13 +166,18 @@ export default function Page({
             outcome: attackDamage,
           })
         );
-        setOpponentRoster(
-          opponentRoster.set(activeOpponentPokemon.name, {
-            pokemon: activeOpponentPokemon,
-            currentHP: 0,
-          })
-        );
-        setActiveOpponentRosterIdentifier(opponentFaintSwitch);
+        // setOpponentRoster(
+        //   opponentRoster.set(activeOpponentPokemon.name, {
+        //     pokemon: activeOpponentPokemon,
+        //     currentHP: 0,
+        //   })
+        // );
+        if (remainingOpponentPokemon - 1 == 0) {
+          setRemainingOpponentPokemon(0);
+        } else {
+          setRemainingOpponentPokemon(remainingOpponentPokemon - 1);
+          setActiveOpponentRosterIdentifier(opponentFaintSwitch);
+        }
       } else {
         setCombatInfo((combatInfo) =>
           combatInfo.set(order, {
@@ -226,6 +248,7 @@ export default function Page({
             outcome: opponentDamage,
           })
         );
+        setRemainingPlayerPokemon(remainingPlayerPokemon - 1);
       } else {
         setCombatInfo((combatInfo) =>
           combatInfo.set(order, {
@@ -303,6 +326,13 @@ export default function Page({
     }
   }
 
+  // combatText or victoryText variable
+
+  let textOption = generateCombatText(combatInfo);
+  if (remainingPlayerPokemon == 0 || remainingOpponentPokemon == 0) {
+    textOption = generateVictoryText(theActivePlayerHP);
+  }
+
   return (
     <div>
       <div className="flex bg-green-600 justify-center h-[400px]">
@@ -343,7 +373,7 @@ export default function Page({
               />
             </div>
           )}
-          {generateCombatText(combatInfo)}
+          {textOption}
         </div>
         {hydrated && (
           <div
@@ -388,7 +418,8 @@ export default function Page({
           {generateMoveButtons(
             playerRoster.get(activePlayerRosterIdentifier),
             (item: Move) => setDisplayArea({ move: item }),
-            (item) => handleMoveOnClick(item)
+            (item) => handleMoveOnClick(item),
+            remainingOpponentPokemon
           )}
           <div className="">Switch:</div>
           {generatePartyButtons(

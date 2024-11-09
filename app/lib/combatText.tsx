@@ -20,7 +20,7 @@ export default function combatText(
     );
   }
   if (combatContent.outcome === "Switching") {
-    <p>Switching to {combatContent.attacker.name}</p>;
+    return <p>Switching to {combatContent.attacker.name}.</p>;
   }
   if (combatContent.outcome === "Fainted") {
     return <p>You sent out {combatContent.attacker.name}!</p>;
