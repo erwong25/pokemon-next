@@ -85,6 +85,9 @@ export default function Page({
   const activeOpponentPokemon = opponentRoster.get(
     activeOpponentRosterIdentifier
   )?.pokemon;
+  console.log(opponentRoster);
+  console.log(activeOpponentRosterIdentifier);
+  console.log(opponentRoster.get(activeOpponentRosterIdentifier));
   if (activePlayerPokemon == undefined || activeOpponentPokemon == undefined) {
     console.log("activePokemon is undefined");
     return;
